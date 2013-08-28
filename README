@@ -47,4 +47,3 @@ data label: label,<optional label for data point>
 data is in this format: bucket,value where bucket must be a power of 2 (1,2,4,..2^N)
 See also an example in SampleData/example_latency_data.txt
 
-
