@@ -1,17 +1,14 @@
-Trace file /ORA/dbs0a/RDTEST2/diag/rdbms/rdtest2/rdtest21/trace/rdtest21_ora_12068.trc
 Oracle Database 12c Enterprise Edition Release 12.1.0.1.0 - 64bit Production
 With the Partitioning, Real Application Clusters, Automatic Storage Management, OLAP,
 Advanced Analytics and Real Application Testing options
-ORACLE_HOME = /ORA/dbs01/oracle/product/rdbms
+ORACLE_HOME = /u01/app/oracle/product/rdbms
 System name:	Linux
-Node name:	devrac3.cern.ch
 Release:	2.6.18-348.3.1.el5
 Version:	#1 SMP Tue Mar 5 13:19:32 EST 2013
 Machine:	x86_64
-Instance name: rdtest21
+Instance name: orcl21
 Redo thread mounted by this instance: 1
 Oracle process number: 118
-Unix process pid: 12068, image: oracle@devrac3.cern.ch (TNS V1-V3)
 
 
 *** 2013-08-26 14:40:23.035

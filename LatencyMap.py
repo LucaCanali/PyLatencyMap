@@ -239,8 +239,8 @@ class ArrayOfLatencyRecords:
     def value_to_string(self,value):
         if value < 0:
             raise Exception('Cannot handle negative numbers') 
-        elif value < 10: 
-            mystring = "%.2g" % value          # one decimal digit for numbers less than 10
+        elif value <= 9: 
+            mystring = "%.1g" % value          # one decimal digit for numbers less than 10
         elif value < 1000000:
             mystring = str(int(round(value)))  # integer value, 6 digits
         else:
@@ -320,10 +320,10 @@ class ArrayOfLatencyRecords:
                    data_point = record.intensity_histogram[bucket]
                 if  data_point == 0:                                  # value 0 goes to token 0 (white)
                     token = 0
-                elif data_point >= max_val:                     # max val and above (in manual mode) go to token 6
+                elif data_point >= max_val:         # max val and above (if in manual max mode) go to token 6
                     token = 6
                 else:
-                    token = {0:1, 1:2, 2:3, 3:4, 4:5, 5:6}[int(data_point*6/max_val)]  # normalize to range 1..6
+                    token = int(data_point*6/max_val) + 1   # normalize to range 1..6
 
                 if g_params.debug_level >= 2:
                    line += str(token) + ':' + str(data_point) + ', '            # debug code
