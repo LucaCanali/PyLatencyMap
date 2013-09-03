@@ -43,7 +43,7 @@ class GlobalParameters:
             sys.exit(1)
         for opt, arg in opts:
             if opt in ('-h', '--help'): 
-                self.usage()
+                # self.usage()  no need as usage is printed by default
                 sys.exit(1)
             if opt in ('-d', '--debug_level'): 
                 self.debug_level = int(arg)
