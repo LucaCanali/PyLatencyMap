@@ -1,6 +1,6 @@
 --
 -- ora_latency.sql
--- this is part of the PyLatencyMap package, Luca.Canali@cern.ch Aug 2013
+-- this is part of the PyLatencyMap package, by Luca.Canali@cern.ch 
 -- service script used to extract data from gv$event_histogram and print it in a record format 
 -- to be processes by LatencyMap.py for visualization as Frequency-Intensity HeatMap
 -- Dependency: wait_and_repeat.sql provides loop-like execution
@@ -29,12 +29,11 @@ select 'label,&event_name latency data from gv$event_histogram' from dual
 union all
 select 'latencyunit, millisec' from dual
 union all
-select wait_time_milli||', '|| wait_count from gv$event_histogram where event='&event_name'
+select wait_time_milli||', '|| wait_count from gv$event_histogram where event='&event_name' and wait_time_milli<>4294967295
 union all
 select '<end record>' from dual;
 
 @@wait_and_repeat.sql &time_delay
 
 exit
-
 

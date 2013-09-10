@@ -1,6 +1,6 @@
-LatencyMap.py v1.0a Aug 2013, by Luca.Canali@cern.ch
+LatencyMap.py v1.0b Sep 2013, by Luca.Canali@cern.ch
 
-PyLatencyMap is a performance-oriented tool for command-line drill down of latency data,integrating various data sources (Oracle, DTrace, trace files) into a basic visualization engine using ANSI escape codes.
+PyLatencyMap is a performance-oriented tool for command-line drill down of latency data and in particular storage latency data. The tool can process various input data sources (Oracle, DTrace, trace files) for display with a real-time basic visualization engine implemented using ANSI escape codes.
 
 Getting started:
 See the example scripts. Start with Example1:
@@ -8,13 +8,12 @@ sqlplus -S / as sysdba @event_histograms_oracle/ora_latency.sql "db file sequent
 
 See also: http://externaltable.blogspot.com
 
-Motivations for this work: Understanding a performance problem is often about understanding where time is spent. Many of the systems I work with are database with an OLTP-like workload. A large fraction of the DB time there is spend on single-block read calls from storage (think for example index-based access to a large table). Studying the latency of single block read calls can provide very useful information: how many reads are from cache? what is the response time when disk seek and rotational latency come into play? are there IO latency outliers? Another and related use for latency studies is when performing stress-tests of (new) storage systems.
+Motivations for this work: Understanding a performance problem is often about understanding where time is spent. Many of the systems I work with are database with an OLTP-like workload. A large fraction of the DB time there is spend on single-block read calls from storage (think for example index-based access to a large table). Studying the latency of single block read calls can provide very useful information: how many reads are from cache? what is the response time when disk seek and rotational latency come into play? are there IO latency outliers?
+Another and related use for latency studies is when performing stress-tests of (new) storage systems.
+Latency data sources: Oracle RDBMS provides an easily available source of latency data with the V$EVENT_HISTOGRAM view. For those not familiar with it, latency data is divided in buckets (1ms, 2ms, ..2^N) and for each bucket there is an associated counter of the number of waits. Similarly DTrace can collect and print latency histograms with the quantize operation. More data sources are available in general from trace files (for example 10046 files in Oracle). Some storage vendors also provide latency histograms in their performance monitoringinterface.
 
-Latency data sources: Oracle RDBMS provides an easily available source of latency data with the V$EVENT_HISTOGRAM view. For those not familiar with it, latency data is divided in buckets (1ms, 2ms, ..2^N) and for each bucket there is an associated counter of the number of waits. Similarly DTrace can collect and print latency histograms with the quantize operation. More data sources are available in general from trace files (for example 10046 files in Oracle). Some storage vendors also provide latency histograms in their performance monitoring interface.
-
-Frequency-Intensity Latency Heatmaps: the representation of latency histograms over time is a 3D visualization problem. As shown by Brendan Gregg and coworkers, heatmaps are an excellent way to solve it. I have experimented with latency heatmap visualization before and found that it is beneficial to plot 2 heatmaps for a given data set. 
-The first type of heatmap that I call Frequency Heatmap visualizes the number of waits events (operations) as shades of color (from light blue to dark blue), with time on the horizontal axis and bucket number on the vertical axis. A second type of map that I call Intensity Heatmap represents the time waited for each latency bucket. For the purposes of this tool data for the the Intensity Heatmap is estimated from the same histograms used for the Frequency Heatmaps (ideally it should come from separate counters for additional precision).
-Frequency Heatmaps can provide information on how many operations are coming from each latency source, for example what fractions of the IOPS comes from controller cache (or SSD) and what fraction domes from spindles. Intensity Heatmaps highlight the total weight tjat each latency bucket has when counting the total latency. For example this allows to identify IO outliers (example: 1 long wait of 1 sec weighs as 1000 short waits of 1ms).
+Frequency-Intensity Latency Heatmaps: the representation of latency histograms over time is a 3D visualization problem. As shown by Brendan Gregg and co-workers, heat maps are an excellent way to solve it. I have experimented with latency heatmap visualization before and found that it is beneficial to plot 2 heatmaps for a given data set.
+The first type of heat map that I call Frequency Heatmap visualizes the number of waits events (operations) as shades of color (from light blue to dark blue), with time on the horizontal axis and bucket number on the vertical axis. A second type of map that I call Intensity Heatmap represents the time waited for each latency bucket. For the purposes of this tool data for the the Intensity Heatmap is estimated from the same histogram data used for the Frequency Heatmaps (ideally it should come from separate counters for additional precision). Frequency Heatmaps can provide information on how many operations are coming from each latency source, for example what fractions of the IOPS comes from controller cache (or SSD) and what fraction comes from spindles. Intensity Heatmaps highlight the total weight that each latency bucket has when counting the total latency. For example this allows to identify IO outliers (example: 1 long wait of 1 sec weighs as 1000 short waits of 1ms).
 
 PyLatencyMap: is a tool that I have written aimed at integrating a variety of latency data sources into a visualization engine. One of the underlying ideas is to keep the tool structure simple and very close to command-line administration style. Three types of scripts are available and they work together in a chain: with a simple pipe operator the output of one step becomes the input of the next. Data source scripts to extract data in latency histogram format from Oracle, DTrace, tracefiles, etc. Data connector scripts may be needed to convert the data source data into the custom format used by the visualization engine. Finally the visualization engine LatencyMap.py produces the Frequency-Intensity heatmaps. ANSI escape codes are the simple solution used to print color in a text environment.
 
@@ -30,13 +29,13 @@ cat record_data_source | <optional connector script> | python LatencyMap.py <opt
 
 Command line options:
 
---num_records arg : number of time intervals displayed, default is 90
---min_bucket=arg  : the lower latency bucket value is 2^arg, default is -1 (autotune)
---max_bucket=arg  : the highest latency bucket value is 2^arg, , default is 64 (autotune)
---frequency_maxval=arg: default is -1 (autotune)
---intensity_maxval=arg: default is -1 (autotune)
---screen_delay=arg: used to add time delay when replaying trace files, default is 0.1 (sec)
---debug_level=arg : debug level, default is 0, 5 is max debug level
+--num_records=arg      : number of time intervals displayed, default is 90
+--min_bucket=arg       : the lower latency bucket value is 2^arg, default is -1 (autotune)
+--max_bucket=arg       : the highest latency bucket value is 2^arg, , default is 64 (autotune)
+--frequency_maxval=arg : default is -1 (autotune)
+--intensity_maxval=arg : default is -1 (autotune)
+--screen_delay=arg     : used to add time delay when replaying trace files, default is 0.1 (sec)
+--debug_level=arg      : debug level, default is 0, 5 is max debug level
 
 Notes on the custom Input Data Format:
 

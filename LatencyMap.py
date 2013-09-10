@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-# LatencyMap.py v1.0 Aug 2013, by Luca.Canali@cern.ch
+# LatencyMap.py v1.0b Sep 2013, by Luca.Canali@cern.ch
 # This is a tool to assist in performance investigations of latency data.
 # Input: latency data histograms in a custom format
 # Output: colored Latency Heatmaps. A frequency heatmap (IOPS) and an intensity heatmap (wait time)
@@ -62,22 +62,22 @@ class GlobalParameters:
 
  
     def usage(self):
-        print 'LatencyMap.py v1.0 Aug 2013, by Luca.Canali@cern.ch'
+        print 'LatencyMap.py v1.0b Sep 2013, by Luca.Canali@cern.ch'
         print 'This is a tool to assist in performance investigations of latency data'
         print 'Input: latency data histograms in a custom format'
-        print 'Output: colored Latency Heatmaps. A frequency heatmap (IOPS) and an intensity heatmap (wait time)'
+        print 'Output: Latency Heatmaps, Frequency heat map (IOPS study) and an intensity heat map (wait time)'
         print 'See README for more info and see also http://externaltable.blogspot.com'
         print
         print 'Usage: data_source| <optional connector script> | python LatencyMap.py <options>'
         print  
         print 'Options are:'
-        print '--num_records arg : number of time intervals displayed, default is 90'
-        print '--min_bucket=arg  : the lower latency bucket value is 2^arg, default is -1 (autotune)'
-        print '--max_bucket=arg  : the highest latency bucket value is 2^arg, , default is 64 (autotune)'
-        print '--frequency_maxval=arg: default is -1 (autotune)'
-        print '--intensity_maxval=arg: default is -1 (autotune)'
-        print '--screen_delay=arg: used to add time delay when replaying trace files, default is 0.1 (sec)'
-        print '--debug_level=arg : debug level, default is 0, 5 is max debug level'
+        print '--num_records=arg      : number of time intervals displayed, default is 90'
+        print '--min_bucket=arg       : the lower latency bucket value is 2^arg, default is -1 (autotune)'
+        print '--max_bucket=arg       : the highest latency bucket value is 2^arg, , default is 64 (autotune)'
+        print '--frequency_maxval=arg : default is -1 (autotune)'
+        print '--intensity_maxval=arg : default is -1 (autotune)'
+        print '--screen_delay=arg     : used to add time delay when replaying trace files, default is 0.1 (sec)'
+        print '--debug_level=arg      : debug level, default is 0, 5 is max debug level'
 
 
 
@@ -251,7 +251,7 @@ class ArrayOfLatencyRecords:
         line = ''
         if g_params.debug_level < 2:
             line += chr(27) + '[0m' + chr(27) + '[2J' + chr(27) + '[H'   # clear screen and move cursor to top line
-        line += 'LatencyMap.py v1.0 - Luca.Canali@cern.ch'
+        line += 'LatencyMap.py v1.0b - Luca.Canali@cern.ch'
         print line
 
     def print_footer(self):

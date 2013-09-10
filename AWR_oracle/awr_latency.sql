@@ -1,6 +1,6 @@
 --
 -- awr_latency.sql
--- this is part of the PyLatencyMap package, Luca.Canali@cern.ch Aug 2013
+-- this is part of the PyLatencyMap package, Luca.Canali@cern.ch
 -- service script used to extract data from dba_hist_event_histogram and print it in a record format 
 -- to be processes by LatencyMap.py for visualization as Frequency-Intensity HeatMap
 --
@@ -8,6 +8,10 @@
 -- Examples: 
 --           sqlplus -S / as sysdba @awr_latency.sql "db file sequential read" 91
 --           sqlplus -S / as sysdba @awr_latency.sql "log file sync" 91
+--
+-- Note: the script will make LatencyMap.py abort with error when an instance restart is found 
+--       the reason is that histogram delta values become negative. To be fixed in future version.
+--      
 --
 
 set lines 200
