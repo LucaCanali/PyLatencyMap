@@ -1,13 +1,16 @@
 LatencyMap.py v1.0b Sep 2013, by Luca.Canali@cern.ch
 
-PyLatencyMap is a performance-oriented tool for command-line drill down of latency data and in particular storage latency data. The tool can process various input data sources (Oracle, DTrace, trace files) for display with a real-time basic visualization engine implemented using ANSI escape codes.
+PyLatencyMap: a tool to generate Latency Heat Maps. Originally developped to visualize latency histograms for storage performance investigattions and real-time monitoring. The tool can process various input data sources (Oracle, DTrace, generic trace files, etc). The output is command-line (terminal) graphics implemented using ANSI escape codes.
 
 Getting started:
-See the example scripts. Start with Example1:
-sqlplus -S / as sysdba @event_histograms_oracle/ora_latency.sql "db file sequential read" 3 | python LatencyMap.py
+  Oracle: http://www.youtube.com/watch?v=-YuShn6ro1g
+  DTrace: http://www.youtube.com/watch?v=aWuWuTCBpGY
 
-See also: http://externaltable.blogspot.com
+See also: 
+  http://externaltable.blogspot.ch/2013/09/getting-started-with-pylatencymap.html
+  http://cern.ch/canali/resources.htm
 
+-------
 Motivations for this work: Understanding a performance problem is often about understanding where time is spent. Many of the systems I work with are database with an OLTP-like workload. A large fraction of the DB time there is spend on single-block read calls from storage (think for example index-based access to a large table). Studying the latency of single block read calls can provide very useful information: how many reads are from cache? what is the response time when disk seek and rotational latency come into play? are there IO latency outliers?
 Another and related use for latency studies is when performing stress-tests of (new) storage systems.
 Latency data sources: Oracle RDBMS provides an easily available source of latency data with the V$EVENT_HISTOGRAM view. For those not familiar with it, latency data is divided in buckets (1ms, 2ms, ..2^N) and for each bucket there is an associated counter of the number of waits. Similarly DTrace can collect and print latency histograms with the quantize operation. More data sources are available in general from trace files (for example 10046 files in Oracle). Some storage vendors also provide latency histograms in their performance monitoringinterface.
