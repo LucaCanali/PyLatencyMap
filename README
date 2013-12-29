@@ -1,6 +1,6 @@
 LatencyMap.py v1.0b Sep 2013, by Luca.Canali@cern.ch
 
-PyLatencyMap: a tool to generate Latency Heat Maps. Originally developped to visualize latency histograms for storage performance investigattions and real-time monitoring. The tool can process various input data sources (Oracle, DTrace, generic trace files, etc). The output is command-line (terminal) graphics implemented using ANSI escape codes.
+PyLatencyMap: a tool to generate Latency Heat Maps. Originally developped to visualize latency histograms for storage performance investigations and real-time monitoring. The tool can process various input data sources (Oracle, DTrace, generic trace files, etc). The output is command-line (terminal) graphics implemented using ANSI escape codes.
 
 Getting started:
   Oracle: http://www.youtube.com/watch?v=-YuShn6ro1g
