@@ -1,0 +1,38 @@
+#!/usr/bin/stap
+#
+# blockio_ioscheduler_latency.stp
+#
+# This is a SystemTap script to gather block I/O latency from the Linux kernel block I/O interface
+# and print I/O latency histograms to be consumed by PyLatencyMap for heatmap visualization
+#
+# By Luca.Canali@cern.ch, March 2015
+#
+# Note this script requires kernel debuginfo
+#
+
+global latencyTimes, requestTime
+
+probe ioscheduler.elv_next_request {
+   requestTime[$q] = gettimeofday_us()
+}
+
+probe ioscheduler.elv_completed_request {
+  t = gettimeofday_us()
+  s = requestTime[$q]
+  delete requestTime[$q]
+  if (s > 0)
+     latencyTimes <<< (t-s)
+}
+
+probe timer.sec(3) {
+   printf("\n<begin record>\n")
+   printf("timestamp, microsec, %d, %s\n",gettimeofday_us(),tz_ctime(gettimeofday_s()))
+   printf("label, Latency of block I/O requests measured with SystemTap and ioscheduler provider\n")
+   printf("latencyunit, microsec\n")
+   printf("datasource, systemtap\n")
+   if (@count(latencyTimes) > 0)
+       println(@hist_log(latencyTimes))
+   printf("\n<end record>\n")
+}
+
+

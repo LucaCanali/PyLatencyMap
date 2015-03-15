@@ -30,7 +30,7 @@ select max(snap_id) max_snap_id from dba_hist_snapshot;
 
 
 with ordered_data as (
-     select eh.*, 'timestamp,musec,'||to_char(1000000*(extract(day from begin_interval_time - TO_TIMESTAMP('01/01/2010 00:00:00','DD/MM/YYYY HH24:MI:SS'))*24*60*60
+     select eh.*, 'timestamp,microsec,'||to_char(1000000*(extract(day from begin_interval_time - TO_TIMESTAMP('01/01/2010 00:00:00','DD/MM/YYYY HH24:MI:SS'))*24*60*60
         + extract(hour from begin_interval_time)*60*60 + extract(minute from begin_interval_time)*60 + extract(second from begin_interval_time)))
         ||','||to_char(begin_interval_time) timestamp_string
      from dba_hist_event_histogram eh, dba_hist_snapshot sn
@@ -48,6 +48,4 @@ select case when lag(snap_id) over (partition by snap_id order by snap_id) is no
 from ordered_data;
 
 exit
-
-
 

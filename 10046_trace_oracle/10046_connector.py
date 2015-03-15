@@ -25,7 +25,8 @@ class LatencyHistogram:
 
     def add_datapoint(self,value):
 
-        bucket = int(math.log(value,2))
+        bucket = int(math.log(value,2)) + 1 # the +1 is added to uniform to the use of Oracle event_histograms
+                                            # for example SystemTap and Dtrace will just use log(value,2)
         self.histogram[bucket] =  self.histogram.get(bucket, 0) + 1      
 
     def print_histogram(self,print_time):
@@ -33,9 +34,10 @@ class LatencyHistogram:
         print '<begin record>'
         for bucket in self.histogram:
             print str(2**bucket) + ',' + str(self.histogram[bucket])
-        print 'timestamp,musec,' + str(print_time) + ', ' + time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(print_time/1000000))
+        print 'timestamp,microsec,' + str(print_time) + ', ' + time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(print_time/1000000))
         print 'label, 10046 trace data for event: ' + event_filter
         print 'latencyunit, microsec'
+        print 'datasource, oracle'   # we have chosen the Oracle conventions for bucket assignment, see bucket calculation above
         print '<end record>'
         sys.stdout.flush()
 
@@ -81,7 +83,5 @@ def main():
 
 if __name__ == '__main__':
     sys.exit(main())
-
-
 
 

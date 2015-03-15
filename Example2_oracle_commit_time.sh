@@ -1,11 +1,10 @@
 #!/bin/bash
 
-# This is an example PyLatencyMap Luca.Canali@cern.ch Aug 2013
-# Display the Oracle's event histogram data log file sync wait events as 
-# a Frequency-Intensity Latency HeatMap
-# Can be used to study commit time latency
+# This is an example launcher script for PyLatencyMap 
+# The sqlplus script outputs data from gv$event_histogram for the wait event log file sync
+# LatencyMap.py displays data as Frequency-Intensity heatmaps
+# This script is intended to be used to perform latency drilldown of the commit time wait event
 # 
 
-sqlplus -S / as sysdba @event_histograms_oracle/ora_latency.sql "log file sync" 3 | python LatencyMap.py
-
+sqlplus -S / as sysdba @Event_histograms_oracle/ora_latency.sql "log file sync" 3 | python LatencyMap.py
 

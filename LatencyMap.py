@@ -1,10 +1,13 @@
 #!/usr/bin/python
 
-# LatencyMap.py v1.0b Sep 2013, by Luca.Canali@cern.ch
-# This is a tool to assist in performance investigations of latency data.
-# Input: latency data histograms in a custom format
+# LatencyMap.py v1.2, first release: Sep 2013, latest updates: March 2015. 
+# By Luca.Canali@cern.ch
+#
+# This is a tool to plot latency heatmaps and assist in performance investigations of latency data.
+# Input: latency data histograms (in a custom format)
 # Output: colored Latency Heatmaps. A frequency heatmap (IOPS) and an intensity heatmap (wait time)
-# See README for more info and also http://externaltable.blogspot.com
+# See README for more info and also http://cern.ch/canali/resources.htm and 
+# http://externaltable.blogspot.com/2013/09/getting-started-with-pylatencymap.html
 #
 # Usage: data_source|<optional connector script> | python LatencyMap.py <options>
 # Help: python LatencyMap.py -h
@@ -26,12 +29,15 @@ class GlobalParameters:
         self.print_legend = True    # set to False to turn off printing this part of the graph
         self.frequency_map = True   # set to False to turn off printing this part of the graph
         self.intensity_map = True   # set to False to turn off printing this part of the graph
-        self.screen_delay = 0.1     # in seconds delay between screens, useful to slow down when working from trace files
-        self.latency_unit = 'millisec'  # default is milliseconds, can be overwritten by latencyunit_tag data
+        self.screen_delay = 0.1     # delay (in sec) between screens, useful to slow down when working from trace files
+        self.latency_unit = 'millisec'  # this is the default, valid values are millisec, microsec and nanosec
         self.begin_tag = '<begin record>'
         self.end_tag = '<end record>'
         self.latencyunit_tag = 'latencyunit'
         self.label_tag = 'label'
+        self.label_data_source = 'datasource'
+        self.default_data_source = 'systemtap' # valid values: systemtap, dtrace, oracle
+
 
     def get_options(self):
         try:
@@ -62,11 +68,10 @@ class GlobalParameters:
 
  
     def usage(self):
-        print 'LatencyMap.py v1.0b Sep 2013, by Luca.Canali@cern.ch'
-        print 'This is a tool to assist in performance investigations of latency data'
+        print 'LatencyMap.py v1.2, by Luca.Canali@cern.ch'
+        print 'This is a tool to plot latency heatmaps and assist in performance investigations of latency data.'
         print 'Input: latency data histograms in a custom format'
-        print 'Output: Latency Heatmaps, Frequency heat map (IOPS study) and an intensity heat map (wait time)'
-        print 'See README for more info and see also http://externaltable.blogspot.com'
+        print 'Output: Latency Heatmaps, Frequency heat map (IOPS study) and an intensity/importance heat map (wait time)'
         print
         print 'Usage: data_source| <optional connector script> | python LatencyMap.py <options>'
         print  
@@ -94,6 +99,7 @@ class LatencyRecord:
         self.sum_intensity = 0
         self.date = ''
         self.label = ''
+        self.data_source = g_params.default_data_source
 
     def print_record_debug(self):
         print '\nLatest data record:' 
@@ -122,13 +128,17 @@ class LatencyRecord:
             if len(split_line) == 1 and split_line[0].strip() == g_params.end_tag:
                 return(0)                                                    # exit read_record, clean condition
 
-            if len(split_line) == 4 and split_line[0].strip() == 'timestamp' and split_line[1].strip() == 'musec':
+            if len(split_line) == 4 and split_line[0].strip() == 'timestamp' and split_line[1].strip() == 'microsec':
                 self.data['timestamp'] = int(split_line[2].strip())     # timestamp in numeric form
                 self.date = split_line[3].strip()                       # timestamp in human-readable format
                 continue        # move to process next line                
 
             if len(split_line) == 2 and split_line[0].strip() == g_params.label_tag:
                 self.label = split_line[1].strip()                       # optional label
+                continue       # move to process next line          
+
+            if len(split_line) == 2 and split_line[0].strip() == g_params.label_data_source:
+                self.data_source = split_line[1].strip()                       # optional data source name
                 continue       # move to process next line          
 
             if len(split_line) == 2 and split_line[0].strip() == g_params.latencyunit_tag:
@@ -168,7 +178,7 @@ class LatencyRecord:
         # compute timestamp deltas if data available, otherwise it will be 0
         self.delta_time = self.data.get('timestamp',0) - previous_record.data.get('timestamp',0)
         if self.delta_time > 0:
-            time_factor = self.delta_time / 1e6           # timestamps are in ms, need to convert to sec
+            time_factor = self.delta_time / 1e6           # timestamps are in microsec, need to convert to sec
         else:
             time_factor = 1                               # cover the case where timestamps are not used
         for bucket in self.data:
@@ -182,12 +192,23 @@ class LatencyRecord:
 
             # compute the frequency array 
             delta_count = self.data.get(bucket,0) - previous_record.data.get(bucket,0)
-            self.frequency_histogram[write_bucket] += delta_count / time_factor
+            self.frequency_histogram[write_bucket] += (delta_count / time_factor)
 
+            # compute the intensity/importance/time waited array 
+            # SystemTap and DTrace count events in latency histograms differently than Oracle
+            # This is of importance when calculating the Intensity/Time waited latency map
+            # Example: value 5 goes in bucket 8 for Oracle and bucket 4 for SystemTap and DTrace
+            # This different behavior needs to be accounted for with 2 different formular differing by a factor 2. 
+            # For Oracle the approximated time waited in a given bucket is 3/4 of latency bucket value * number of waits
+            # For SystemTap/DTrace the approximated time waited is 3/2 of latency bucket value * number of waits
 
-            # compute the intensity array 
-            # this approximate the time waited in a given bucket as 0.75 of latency bucket value * number of waits
-            self.intensity_histogram[write_bucket] += (0.75 * 2**bucket * delta_count) / time_factor
+            if self.data_source == 'oracle':
+                 self.intensity_histogram[write_bucket] += (0.75 * delta_count * 2**bucket ) / time_factor
+            elif (self.data_source == 'systemtap' or self.data_source == 'dtrace'):
+                 self.intensity_histogram[write_bucket] += (1.5 * delta_count * 2**bucket ) / time_factor
+            else:
+                 print 'Invalid data source. Please use one of: systemtap, dtrace, oracle'
+                 exit(1)
 
         self.max_frequency = max(self.frequency_histogram)
         self.sum_frequency = sum(self.frequency_histogram)
@@ -251,15 +272,37 @@ class ArrayOfLatencyRecords:
         line = ''
         if g_params.debug_level < 2:
             line += chr(27) + '[0m' + chr(27) + '[2J' + chr(27) + '[H'   # clear screen and move cursor to top line
-        line += 'LatencyMap.py v1.0b - Luca.Canali@cern.ch'
+        line += 'LatencyMap.py v1.2 - Luca.Canali@cern.ch'
         print line
 
     def print_footer(self):
-        record = self.data[len(self.data)-1]
+        total_intensity = 0
+        total_frequency = 0
+        for record in self.data:
+            total_intensity += record.sum_intensity
+            total_frequency += record.sum_frequency
+        latest_intensity = record.sum_intensity
+        latest_frequency = record.sum_frequency
+        if total_frequency > 0:
+            total_avg_latency = total_intensity/total_frequency  
+        else:
+            total_avg_latency = 0
+        if latest_frequency > 0:
+            latest_avg_latency = latest_intensity/latest_frequency
+        else:
+            latest_avg_latency = 0
+        line = 'Average latency: '
+        line += self.value_to_string(total_avg_latency)
+        line += ' '+ g_params.latency_unit 
+        line += '. Average latency of latest values: '
+        line += self.value_to_string(latest_avg_latency)
+        line += ' '+ g_params.latency_unit 
+        print line
+        # record = self.data[len(self.data)-1]
         line = 'Sample num: ' + str(self.sample_number) 
-        line += ', Delta time (sec): '                              # note timestamp is in musec, convert to second
+        line += '. Delta time: '                              # note timestamp is in microsec, convert to second
         line += str(round(record.delta_time/1e6,1))     
-        line += ', Date: ' + record.date.upper()
+        line += ' sec. Date: ' + record.date.upper()
         print line
         if record.label <> '':
             print 'Label: ' + record.label
@@ -270,7 +313,7 @@ class ArrayOfLatencyRecords:
             params_maxval = g_params.frequency_maxval
             params_color = 'blue'
             chart_maxval = max([record.max_frequency for record in self.data]) 
-            chart_title = 'Frequency Heatmap: operations per sec'
+            chart_title = 'Frequency Heatmap: events per sec'
             unit = '(N#/sec)'
         elif type == 'Intensity':
             params_maxval = g_params.intensity_maxval
@@ -354,12 +397,12 @@ class ArrayOfLatencyRecords:
         # trailing part of the graph
         line = '      ' 
         if type == 'Frequency':
-            line += 'Number of latency operations per second: x=time, y=latency bucket'
+            line += 'x=time, y=latency bucket, color = wait frequency (IOPS)'
             line = line.ljust(g_params.num_latency_records + 3)
             line += 'Sum:' + self.value_to_string(record.sum_frequency).rjust(7,'.')
             line += '    ' + self.value_to_string(max([record.sum_frequency for record in self.data])) 
         elif type == 'Intensity':
-            line += 'Wait time over elapsed time: x=time, y=latency bucket'
+            line += 'x=time, y=latency bucket, color = time waited'
             line = line.ljust(g_params.num_latency_records + 3)
             line += 'Sum:' + self.value_to_string(record.sum_intensity).rjust(7,'.')
             line += '    ' + self.value_to_string(max([record.sum_intensity for record in self.data]))
@@ -393,7 +436,7 @@ def main():
         if g_params.intensity_map:
             my_chart_data.print_heat_map('Intensity')
         my_chart_data.print_footer()
-        time.sleep(g_params.screen_delay)             # delay useful when replaying historical data and/or trace files
+        time.sleep(g_params.screen_delay)             # the delay is useful when replaying recorded data and/or trace files
 
         if g_params.debug_level >= 3:
             my_chart_data.print_frequency_histograms_debug()

@@ -1,5 +1,5 @@
 <begin record>
-timestamp, musec, 52011653754,26-AUG-13 04.26.51.653754 PM +02:00
+timestamp, microsec, 52011653754,26-AUG-13 04.26.51.653754 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4129312
@@ -36,7 +36,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52014671464,26-AUG-13 04.26.54.671464 PM +02:00
+timestamp, microsec, 52014671464,26-AUG-13 04.26.54.671464 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4131014
@@ -73,7 +73,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52017691244,26-AUG-13 04.26.57.691244 PM +02:00
+timestamp, microsec, 52017691244,26-AUG-13 04.26.57.691244 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4132848
@@ -110,7 +110,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52020709194,26-AUG-13 04.27.00.709194 PM +02:00
+timestamp, microsec, 52020709194,26-AUG-13 04.27.00.709194 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4134606
@@ -147,7 +147,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52023732996,26-AUG-13 04.27.03.732996 PM +02:00
+timestamp, microsec, 52023732996,26-AUG-13 04.27.03.732996 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4136680
@@ -184,7 +184,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52026753849,26-AUG-13 04.27.06.753849 PM +02:00
+timestamp, microsec, 52026753849,26-AUG-13 04.27.06.753849 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4138508
@@ -221,7 +221,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52029771726,26-AUG-13 04.27.09.771726 PM +02:00
+timestamp, microsec, 52029771726,26-AUG-13 04.27.09.771726 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4140790
@@ -258,7 +258,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52032794049,26-AUG-13 04.27.12.794049 PM +02:00
+timestamp, microsec, 52032794049,26-AUG-13 04.27.12.794049 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4142700
@@ -295,7 +295,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52035811866,26-AUG-13 04.27.15.811866 PM +02:00
+timestamp, microsec, 52035811866,26-AUG-13 04.27.15.811866 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4144971
@@ -332,7 +332,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52038836316,26-AUG-13 04.27.18.836316 PM +02:00
+timestamp, microsec, 52038836316,26-AUG-13 04.27.18.836316 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 2681435
@@ -369,7 +369,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52041857359,26-AUG-13 04.27.21.857359 PM +02:00
+timestamp, microsec, 52041857359,26-AUG-13 04.27.21.857359 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4149815
@@ -406,7 +406,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52044877371,26-AUG-13 04.27.24.877371 PM +02:00
+timestamp, microsec, 52044877371,26-AUG-13 04.27.24.877371 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4152440
@@ -443,7 +443,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52047898153,26-AUG-13 04.27.27.898153 PM +02:00
+timestamp, microsec, 52047898153,26-AUG-13 04.27.27.898153 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4154444
@@ -480,7 +480,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52050916879,26-AUG-13 04.27.30.916879 PM +02:00
+timestamp, microsec, 52050916879,26-AUG-13 04.27.30.916879 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4156503
@@ -517,7 +517,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52053938925,26-AUG-13 04.27.33.938925 PM +02:00
+timestamp, microsec, 52053938925,26-AUG-13 04.27.33.938925 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4158546
@@ -554,7 +554,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52056959810,26-AUG-13 04.27.36.959810 PM +02:00
+timestamp, microsec, 52056959810,26-AUG-13 04.27.36.959810 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4161158
@@ -591,7 +591,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52059978196,26-AUG-13 04.27.39.978196 PM +02:00
+timestamp, microsec, 52059978196,26-AUG-13 04.27.39.978196 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4163672
@@ -628,7 +628,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52063001969,26-AUG-13 04.27.43.001969 PM +02:00
+timestamp, microsec, 52063001969,26-AUG-13 04.27.43.001969 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4166107
@@ -665,7 +665,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52066019718,26-AUG-13 04.27.46.019718 PM +02:00
+timestamp, microsec, 52066019718,26-AUG-13 04.27.46.019718 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4168022
@@ -702,7 +702,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52069043491,26-AUG-13 04.27.49.043491 PM +02:00
+timestamp, microsec, 52069043491,26-AUG-13 04.27.49.043491 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4170289
@@ -739,7 +739,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52072064369,26-AUG-13 04.27.52.064369 PM +02:00
+timestamp, microsec, 52072064369,26-AUG-13 04.27.52.064369 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4172283
@@ -776,7 +776,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52075083090,26-AUG-13 04.27.55.083090 PM +02:00
+timestamp, microsec, 52075083090,26-AUG-13 04.27.55.083090 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4174969
@@ -813,7 +813,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52078103882,26-AUG-13 04.27.58.103882 PM +02:00
+timestamp, microsec, 52078103882,26-AUG-13 04.27.58.103882 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4177786
@@ -850,7 +850,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52081122623,26-AUG-13 04.28.01.122623 PM +02:00
+timestamp, microsec, 52081122623,26-AUG-13 04.28.01.122623 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4180221
@@ -887,7 +887,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52084146299,26-AUG-13 04.28.04.146299 PM +02:00
+timestamp, microsec, 52084146299,26-AUG-13 04.28.04.146299 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4182138
@@ -924,7 +924,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52087167582,26-AUG-13 04.28.07.167582 PM +02:00
+timestamp, microsec, 52087167582,26-AUG-13 04.28.07.167582 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4184133
@@ -961,7 +961,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52090187458,26-AUG-13 04.28.10.187458 PM +02:00
+timestamp, microsec, 52090187458,26-AUG-13 04.28.10.187458 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4186843
@@ -998,7 +998,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52093207968,26-AUG-13 04.28.13.207968 PM +02:00
+timestamp, microsec, 52093207968,26-AUG-13 04.28.13.207968 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4189436
@@ -1035,7 +1035,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52096225359,26-AUG-13 04.28.16.225359 PM +02:00
+timestamp, microsec, 52096225359,26-AUG-13 04.28.16.225359 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4192059
@@ -1072,7 +1072,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52099248341,26-AUG-13 04.28.19.248341 PM +02:00
+timestamp, microsec, 52099248341,26-AUG-13 04.28.19.248341 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4194202
@@ -1109,7 +1109,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52102270203,26-AUG-13 04.28.22.270203 PM +02:00
+timestamp, microsec, 52102270203,26-AUG-13 04.28.22.270203 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4196168
@@ -1146,7 +1146,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52105287935,26-AUG-13 04.28.25.287935 PM +02:00
+timestamp, microsec, 52105287935,26-AUG-13 04.28.25.287935 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4198458
@@ -1183,7 +1183,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52108310632,26-AUG-13 04.28.28.310632 PM +02:00
+timestamp, microsec, 52108310632,26-AUG-13 04.28.28.310632 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4200503
@@ -1220,7 +1220,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52111328396,26-AUG-13 04.28.31.328396 PM +02:00
+timestamp, microsec, 52111328396,26-AUG-13 04.28.31.328396 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4203853
@@ -1257,7 +1257,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52114351263,26-AUG-13 04.28.34.351263 PM +02:00
+timestamp, microsec, 52114351263,26-AUG-13 04.28.34.351263 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4207070
@@ -1294,7 +1294,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52117371922,26-AUG-13 04.28.37.371922 PM +02:00
+timestamp, microsec, 52117371922,26-AUG-13 04.28.37.371922 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4209659
@@ -1331,7 +1331,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52120388555,26-AUG-13 04.28.40.388555 PM +02:00
+timestamp, microsec, 52120388555,26-AUG-13 04.28.40.388555 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4211215
@@ -1368,7 +1368,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52123413541,26-AUG-13 04.28.43.413541 PM +02:00
+timestamp, microsec, 52123413541,26-AUG-13 04.28.43.413541 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 2681437
@@ -1405,7 +1405,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52126432614,26-AUG-13 04.28.46.432614 PM +02:00
+timestamp, microsec, 52126432614,26-AUG-13 04.28.46.432614 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4215960
@@ -1442,7 +1442,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52129454417,26-AUG-13 04.28.49.454417 PM +02:00
+timestamp, microsec, 52129454417,26-AUG-13 04.28.49.454417 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4218582
@@ -1479,7 +1479,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52132476494,26-AUG-13 04.28.52.476494 PM +02:00
+timestamp, microsec, 52132476494,26-AUG-13 04.28.52.476494 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4220804
@@ -1516,7 +1516,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52135494629,26-AUG-13 04.28.55.494629 PM +02:00
+timestamp, microsec, 52135494629,26-AUG-13 04.28.55.494629 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4223278
@@ -1553,7 +1553,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52138516653,26-AUG-13 04.28.58.516653 PM +02:00
+timestamp, microsec, 52138516653,26-AUG-13 04.28.58.516653 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4225416
@@ -1590,7 +1590,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52141533165,26-AUG-13 04.29.01.533165 PM +02:00
+timestamp, microsec, 52141533165,26-AUG-13 04.29.01.533165 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4227334
@@ -1627,7 +1627,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52144557865,26-AUG-13 04.29.04.557865 PM +02:00
+timestamp, microsec, 52144557865,26-AUG-13 04.29.04.557865 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4229386
@@ -1664,7 +1664,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52147578718,26-AUG-13 04.29.07.578718 PM +02:00
+timestamp, microsec, 52147578718,26-AUG-13 04.29.07.578718 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4232254
@@ -1701,7 +1701,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52150596495,26-AUG-13 04.29.10.596495 PM +02:00
+timestamp, microsec, 52150596495,26-AUG-13 04.29.10.596495 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4235022
@@ -1738,7 +1738,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52153620526,26-AUG-13 04.29.13.620526 PM +02:00
+timestamp, microsec, 52153620526,26-AUG-13 04.29.13.620526 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4237156
@@ -1775,7 +1775,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52156639080,26-AUG-13 04.29.16.639080 PM +02:00
+timestamp, microsec, 52156639080,26-AUG-13 04.29.16.639080 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4238941
@@ -1812,7 +1812,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52159660758,26-AUG-13 04.29.19.660758 PM +02:00
+timestamp, microsec, 52159660758,26-AUG-13 04.29.19.660758 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4241710
@@ -1849,7 +1849,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52162681655,26-AUG-13 04.29.22.681655 PM +02:00
+timestamp, microsec, 52162681655,26-AUG-13 04.29.22.681655 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4244099
@@ -1886,7 +1886,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52165699248,26-AUG-13 04.29.25.699248 PM +02:00
+timestamp, microsec, 52165699248,26-AUG-13 04.29.25.699248 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4246400
@@ -1923,7 +1923,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52168724245,26-AUG-13 04.29.28.724245 PM +02:00
+timestamp, microsec, 52168724245,26-AUG-13 04.29.28.724245 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4249370
@@ -1960,7 +1960,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52171745007,26-AUG-13 04.29.31.745007 PM +02:00
+timestamp, microsec, 52171745007,26-AUG-13 04.29.31.745007 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4251845
@@ -1997,7 +1997,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52174763063,26-AUG-13 04.29.34.763063 PM +02:00
+timestamp, microsec, 52174763063,26-AUG-13 04.29.34.763063 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4254231
@@ -2034,7 +2034,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52177786533,26-AUG-13 04.29.37.786533 PM +02:00
+timestamp, microsec, 52177786533,26-AUG-13 04.29.37.786533 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4256284
@@ -2071,7 +2071,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52180803236,26-AUG-13 04.29.40.803236 PM +02:00
+timestamp, microsec, 52180803236,26-AUG-13 04.29.40.803236 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4258282
@@ -2108,7 +2108,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52183827402,26-AUG-13 04.29.43.827402 PM +02:00
+timestamp, microsec, 52183827402,26-AUG-13 04.29.43.827402 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4260736
@@ -2145,7 +2145,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52186850776,26-AUG-13 04.29.46.850776 PM +02:00
+timestamp, microsec, 52186850776,26-AUG-13 04.29.46.850776 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4263460
@@ -2182,7 +2182,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52189870635,26-AUG-13 04.29.49.870635 PM +02:00
+timestamp, microsec, 52189870635,26-AUG-13 04.29.49.870635 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4265618
@@ -2219,7 +2219,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52192900295,26-AUG-13 04.29.52.900295 PM +02:00
+timestamp, microsec, 52192900295,26-AUG-13 04.29.52.900295 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4268646
@@ -2256,7 +2256,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52195916924,26-AUG-13 04.29.55.916924 PM +02:00
+timestamp, microsec, 52195916924,26-AUG-13 04.29.55.916924 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4271205
@@ -2293,7 +2293,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52198941466,26-AUG-13 04.29.58.941466 PM +02:00
+timestamp, microsec, 52198941466,26-AUG-13 04.29.58.941466 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4274214
@@ -2330,7 +2330,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52201961967,26-AUG-13 04.30.01.961967 PM +02:00
+timestamp, microsec, 52201961967,26-AUG-13 04.30.01.961967 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4276536
@@ -2367,7 +2367,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52204978325,26-AUG-13 04.30.04.978325 PM +02:00
+timestamp, microsec, 52204978325,26-AUG-13 04.30.04.978325 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4279304
@@ -2404,7 +2404,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52208004242,26-AUG-13 04.30.08.004242 PM +02:00
+timestamp, microsec, 52208004242,26-AUG-13 04.30.08.004242 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4281590
@@ -2441,7 +2441,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52211021794,26-AUG-13 04.30.11.021794 PM +02:00
+timestamp, microsec, 52211021794,26-AUG-13 04.30.11.021794 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 2681437
@@ -2478,7 +2478,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52214044551,26-AUG-13 04.30.14.044551 PM +02:00
+timestamp, microsec, 52214044551,26-AUG-13 04.30.14.044551 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4285868
@@ -2515,7 +2515,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52217067396,26-AUG-13 04.30.17.067396 PM +02:00
+timestamp, microsec, 52217067396,26-AUG-13 04.30.17.067396 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4286191
@@ -2552,7 +2552,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52220084453,26-AUG-13 04.30.20.084453 PM +02:00
+timestamp, microsec, 52220084453,26-AUG-13 04.30.20.084453 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4286252
@@ -2589,7 +2589,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52223106772,26-AUG-13 04.30.23.106772 PM +02:00
+timestamp, microsec, 52223106772,26-AUG-13 04.30.23.106772 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4286252
@@ -2626,7 +2626,7 @@ latencyunit, millisec
 PL/SQL procedure successfully completed.
 
 <begin record>
-timestamp, musec, 52226120610,26-AUG-13 04.30.26.120610 PM +02:00
+timestamp, microsec, 52226120610,26-AUG-13 04.30.26.120610 PM +02:00
 label,db file sequential read latency data from gv$event_histogram
 latencyunit, millisec
 1, 4286252

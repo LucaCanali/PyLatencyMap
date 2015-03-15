@@ -1,7 +1,7 @@
  CPU     ID                    FUNCTION:NAME
    3  72639                        :tick-10s 
 <begin record>
-timestamp,musec,1006592395604,2013 Aug 27 10:54:53
+timestamp,microsec,1006592395604,2013 Aug 27 10:54:53
 label, pread latency measured with DTrace
 latencyunit, nanosec
   myhistogram                                       
@@ -24,7 +24,7 @@ latencyunit, nanosec
 <end record>
    3  72639                        :tick-10s 
 <begin record>
-timestamp,musec,1006602395547,2013 Aug 27 10:55:03
+timestamp,microsec,1006602395547,2013 Aug 27 10:55:03
 label, pread latency measured with DTrace
 latencyunit, nanosec
   myhistogram                                       
@@ -49,7 +49,7 @@ latencyunit, nanosec
 <end record>
    3  72639                        :tick-10s 
 <begin record>
-timestamp,musec,1006612395606,2013 Aug 27 10:55:13
+timestamp,microsec,1006612395606,2013 Aug 27 10:55:13
 label, pread latency measured with DTrace
 latencyunit, nanosec
   myhistogram                                       
@@ -74,7 +74,7 @@ latencyunit, nanosec
 <end record>
    3  72639                        :tick-10s 
 <begin record>
-timestamp,musec,1006622395558,2013 Aug 27 10:55:23
+timestamp,microsec,1006622395558,2013 Aug 27 10:55:23
 label, pread latency measured with DTrace
 latencyunit, nanosec
   myhistogram                                       
@@ -99,7 +99,7 @@ latencyunit, nanosec
 <end record>
    3  72639                        :tick-10s 
 <begin record>
-timestamp,musec,1006632395589,2013 Aug 27 10:55:33
+timestamp,microsec,1006632395589,2013 Aug 27 10:55:33
 label, pread latency measured with DTrace
 latencyunit, nanosec
   myhistogram                                       
@@ -124,7 +124,7 @@ latencyunit, nanosec
 <end record>
    3  72639                        :tick-10s 
 <begin record>
-timestamp,musec,1006642395580,2013 Aug 27 10:55:43
+timestamp,microsec,1006642395580,2013 Aug 27 10:55:43
 label, pread latency measured with DTrace
 latencyunit, nanosec
   myhistogram                                       
@@ -149,7 +149,7 @@ latencyunit, nanosec
 <end record>
    3  72639                        :tick-10s 
 <begin record>
-timestamp,musec,1006652395633,2013 Aug 27 10:55:53
+timestamp,microsec,1006652395633,2013 Aug 27 10:55:53
 label, pread latency measured with DTrace
 latencyunit, nanosec
   myhistogram                                       
@@ -174,7 +174,7 @@ latencyunit, nanosec
 <end record>
    3  72639                        :tick-10s 
 <begin record>
-timestamp,musec,1006662395572,2013 Aug 27 10:56:03
+timestamp,microsec,1006662395572,2013 Aug 27 10:56:03
 label, pread latency measured with DTrace
 latencyunit, nanosec
   myhistogram                                       
@@ -199,7 +199,7 @@ latencyunit, nanosec
 <end record>
    3  72639                        :tick-10s 
 <begin record>
-timestamp,musec,1006672395536,2013 Aug 27 10:56:13
+timestamp,microsec,1006672395536,2013 Aug 27 10:56:13
 label, pread latency measured with DTrace
 latencyunit, nanosec
   myhistogram                                       
@@ -224,7 +224,7 @@ latencyunit, nanosec
 <end record>
    3  72639                        :tick-10s 
 <begin record>
-timestamp,musec,1006682395538,2013 Aug 27 10:56:23
+timestamp,microsec,1006682395538,2013 Aug 27 10:56:23
 label, pread latency measured with DTrace
 latencyunit, nanosec
   myhistogram                                       
@@ -250,7 +250,7 @@ latencyunit, nanosec
 <end record>
    3  72639                        :tick-10s 
 <begin record>
-timestamp,musec,1006692395560,2013 Aug 27 10:56:33
+timestamp,microsec,1006692395560,2013 Aug 27 10:56:33
 label, pread latency measured with DTrace
 latencyunit, nanosec
   myhistogram                                       
@@ -276,7 +276,7 @@ latencyunit, nanosec
 <end record>
    3  72639                        :tick-10s 
 <begin record>
-timestamp,musec,1006702395531,2013 Aug 27 10:56:43
+timestamp,microsec,1006702395531,2013 Aug 27 10:56:43
 label, pread latency measured with DTrace
 latencyunit, nanosec
   myhistogram                                       
@@ -302,7 +302,7 @@ latencyunit, nanosec
 <end record>
    3  72639                        :tick-10s 
 <begin record>
-timestamp,musec,1006712395559,2013 Aug 27 10:56:53
+timestamp,microsec,1006712395559,2013 Aug 27 10:56:53
 label, pread latency measured with DTrace
 latencyunit, nanosec
   myhistogram                                       
@@ -328,7 +328,7 @@ latencyunit, nanosec
 <end record>
    3  72639                        :tick-10s 
 <begin record>
-timestamp,musec,1006722395537,2013 Aug 27 10:57:03
+timestamp,microsec,1006722395537,2013 Aug 27 10:57:03
 label, pread latency measured with DTrace
 latencyunit, nanosec
   myhistogram                                       
@@ -354,7 +354,7 @@ latencyunit, nanosec
 <end record>
    3  72639                        :tick-10s 
 <begin record>
-timestamp,musec,1006732395566,2013 Aug 27 10:57:13
+timestamp,microsec,1006732395566,2013 Aug 27 10:57:13
 label, pread latency measured with DTrace
 latencyunit, nanosec
   myhistogram                                       
@@ -380,7 +380,7 @@ latencyunit, nanosec
 <end record>
    3  72639                        :tick-10s 
 <begin record>
-timestamp,musec,1006742395542,2013 Aug 27 10:57:23
+timestamp,microsec,1006742395542,2013 Aug 27 10:57:23
 label, pread latency measured with DTrace
 latencyunit, nanosec
   myhistogram                                       
@@ -406,7 +406,7 @@ latencyunit, nanosec
 <end record>
    3  72639                        :tick-10s 
 <begin record>
-timestamp,musec,1006752395574,2013 Aug 27 10:57:33
+timestamp,microsec,1006752395574,2013 Aug 27 10:57:33
 label, pread latency measured with DTrace
 latencyunit, nanosec
   myhistogram                                       
@@ -432,7 +432,7 @@ latencyunit, nanosec
 <end record>
    3  72639                        :tick-10s 
 <begin record>
-timestamp,musec,1006762395538,2013 Aug 27 10:57:43
+timestamp,microsec,1006762395538,2013 Aug 27 10:57:43
 label, pread latency measured with DTrace
 latencyunit, nanosec
   myhistogram                                       
@@ -458,7 +458,7 @@ latencyunit, nanosec
 <end record>
    3  72639                        :tick-10s 
 <begin record>
-timestamp,musec,1006772395531,2013 Aug 27 10:57:53
+timestamp,microsec,1006772395531,2013 Aug 27 10:57:53
 label, pread latency measured with DTrace
 latencyunit, nanosec
   myhistogram                                       
@@ -484,7 +484,7 @@ latencyunit, nanosec
 <end record>
    3  72639                        :tick-10s 
 <begin record>
-timestamp,musec,1006782395537,2013 Aug 27 10:58:03
+timestamp,microsec,1006782395537,2013 Aug 27 10:58:03
 label, pread latency measured with DTrace
 latencyunit, nanosec
   myhistogram                                       
@@ -510,7 +510,7 @@ latencyunit, nanosec
 <end record>
    3  72639                        :tick-10s 
 <begin record>
-timestamp,musec,1006792395554,2013 Aug 27 10:58:13
+timestamp,microsec,1006792395554,2013 Aug 27 10:58:13
 label, pread latency measured with DTrace
 latencyunit, nanosec
   myhistogram                                       
@@ -536,7 +536,7 @@ latencyunit, nanosec
 <end record>
    3  72639                        :tick-10s 
 <begin record>
-timestamp,musec,1006802395579,2013 Aug 27 10:58:23
+timestamp,microsec,1006802395579,2013 Aug 27 10:58:23
 label, pread latency measured with DTrace
 latencyunit, nanosec
   myhistogram                                       
@@ -562,7 +562,7 @@ latencyunit, nanosec
 <end record>
    3  72639                        :tick-10s 
 <begin record>
-timestamp,musec,1006812395555,2013 Aug 27 10:58:33
+timestamp,microsec,1006812395555,2013 Aug 27 10:58:33
 label, pread latency measured with DTrace
 latencyunit, nanosec
   myhistogram                                       
@@ -588,7 +588,7 @@ latencyunit, nanosec
 <end record>
    3  72639                        :tick-10s 
 <begin record>
-timestamp,musec,1006822395547,2013 Aug 27 10:58:43
+timestamp,microsec,1006822395547,2013 Aug 27 10:58:43
 label, pread latency measured with DTrace
 latencyunit, nanosec
   myhistogram                                       
@@ -615,7 +615,7 @@ latencyunit, nanosec
 <end record>
    3  72639                        :tick-10s 
 <begin record>
-timestamp,musec,1006832395593,2013 Aug 27 10:58:53
+timestamp,microsec,1006832395593,2013 Aug 27 10:58:53
 label, pread latency measured with DTrace
 latencyunit, nanosec
   myhistogram                                       
@@ -642,7 +642,7 @@ latencyunit, nanosec
 <end record>
    3  72639                        :tick-10s 
 <begin record>
-timestamp,musec,1006842395573,2013 Aug 27 10:59:03
+timestamp,microsec,1006842395573,2013 Aug 27 10:59:03
 label, pread latency measured with DTrace
 latencyunit, nanosec
   myhistogram                                       
@@ -669,7 +669,7 @@ latencyunit, nanosec
 <end record>
    3  72639                        :tick-10s 
 <begin record>
-timestamp,musec,1006852395594,2013 Aug 27 10:59:13
+timestamp,microsec,1006852395594,2013 Aug 27 10:59:13
 label, pread latency measured with DTrace
 latencyunit, nanosec
   myhistogram                                       
@@ -696,7 +696,7 @@ latencyunit, nanosec
 <end record>
    3  72639                        :tick-10s 
 <begin record>
-timestamp,musec,1006862395549,2013 Aug 27 10:59:23
+timestamp,microsec,1006862395549,2013 Aug 27 10:59:23
 label, pread latency measured with DTrace
 latencyunit, nanosec
   myhistogram                                       
@@ -723,7 +723,7 @@ latencyunit, nanosec
 <end record>
    3  72639                        :tick-10s 
 <begin record>
-timestamp,musec,1006872395536,2013 Aug 27 10:59:33
+timestamp,microsec,1006872395536,2013 Aug 27 10:59:33
 label, pread latency measured with DTrace
 latencyunit, nanosec
   myhistogram                                       
@@ -750,7 +750,7 @@ latencyunit, nanosec
 <end record>
    3  72639                        :tick-10s 
 <begin record>
-timestamp,musec,1006882396025,2013 Aug 27 10:59:43
+timestamp,microsec,1006882396025,2013 Aug 27 10:59:43
 label, pread latency measured with DTrace
 latencyunit, nanosec
   myhistogram                                       
@@ -777,7 +777,7 @@ latencyunit, nanosec
 <end record>
    3  72639                        :tick-10s 
 <begin record>
-timestamp,musec,1006892396393,2013 Aug 27 10:59:53
+timestamp,microsec,1006892396393,2013 Aug 27 10:59:53
 label, pread latency measured with DTrace
 latencyunit, nanosec
   myhistogram                                       
