@@ -57,7 +57,9 @@ Latency data is in this format: bucket,value where bucket must be a power of 2 (
 See also an example in SampleData/example_latency_data.txt
 
 See also:
+http://db-blog.web.cern.ch/blog/luca-canali/2015-03-heat-map-visualization-systemtap-pylatencymap
 http://externaltable.blogspot.com/2013/09/getting-started-with-pylatencymap.html
+http://externaltable.blogspot.ch/2013/08/pylatencymap-performance-tool-to-drill.html
 http://cern.ch/canali
 
 References and acknowledgements:
