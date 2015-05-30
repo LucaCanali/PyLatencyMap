@@ -1,5 +1,5 @@
-PyLatencyMap v1.2
-Latest updates March 2015. Version 1.0 released in Sep 2013.
+PyLatencyMap v1.2.1 - Latest updates May 2015. 
+First release: version 1.0, September 2013.
 Author: Luca.Canali@cern.ch
 
 PyLatencyMap is a tool and set of scripts to collect and display latency heat maps from the command line interface. The original use for which PyLatencyMap has been developed is to measure and display storage latency data. PyLatencyMap can be used/extended to display heat maps from a generic source of latency data, ideally already structured as a latency histogram, but raw format is also possible.
@@ -57,10 +57,10 @@ Latency data is in this format: bucket,value where bucket must be a power of 2 (
 See also an example in SampleData/example_latency_data.txt
 
 See also:
-http://db-blog.web.cern.ch/blog/luca-canali/2015-03-heat-map-visualization-systemtap-pylatencymap
-http://externaltable.blogspot.com/2013/09/getting-started-with-pylatencymap.html
-http://externaltable.blogspot.ch/2013/08/pylatencymap-performance-tool-to-drill.html
 http://cern.ch/canali
+http://externaltable.blogspot.com/2015/03/heat-map-visualization-for-systemtap.html
+http://externaltable.blogspot.com/2013/09/getting-started-with-pylatencymap.html
+http://externaltable.blogspot.com/2013/08/pylatencymap-performance-tool-to-drill.html
 
 References and acknowledgements:
 The source of inspiration for this work is Brendan Gregg’s ACM queue article "Visualizing System Latency" of May 2008 and the subsequent blog articles and tools described at: http://www.brendangregg.com/HeatMaps/latency.html

@@ -8,10 +8,10 @@
 # By Luca.Canali@cern.ch, March 2015
 #
 # This script is based on original ideas of biolatency-nd.stp of systemtap-lwtools
-# by Brendan Gregg 
+# by Brendan Gregg
 #
-# Note the use of kernel.trace("block_rq_issue") and kernel.trace("block_rq_complete") instead of 
-# ioblock.request and ioblock_end, this allow the probe to work without the need to have kernel debug info. 
+# Note the use of kernel.trace("block_rq_issue") and kernel.trace("block_rq_complete") instead of
+# ioblock.request and ioblock_end, the probe works without the need to have kernel debuginfo.
 #
 
 global latencyTimes, requestTime
