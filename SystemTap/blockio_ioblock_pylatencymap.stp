@@ -13,7 +13,8 @@
 global latencyTimes, requestTime
 
 probe ioblock_trace.request {
-  requestTime[$bio] = gettimeofday_us()
+  if ($bio)
+      requestTime[$bio] = gettimeofday_us()
 }
 
 probe ioblock.end {

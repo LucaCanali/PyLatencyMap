@@ -5,5 +5,5 @@
 # This can be used to investigate single-block read latency 
 # Note this scripts requires to have SystemTap installed 
 
-stap -v SystemTap/blockio_ioscheduler_latency.stp |python SystemTap/systemtap_connector.py |python LatencyMap.py
+stap -v ./blockio_ioscheduler_pylatencymap.stp |python ./systemtap_connector.py |python ../LatencyMap.py
 

@@ -1,12 +1,12 @@
 #!/usr/bin/stap
 #
-# oracle_event_latency.stp
+# oracle_event_pylatencymap.stp
 #
 # This is a SystemTap script to gather Oracle wait event measurements directly from Oracle binaries  
 # and print wait event latency histograms to be consumed by PyLatencyMap for heatmap visualization
 #
 #
-# Use: stap -v oracle_event_latency.stp <event_num>
+# Use: stap -v oracle_event_pylatencymap.stp <event_num>
 #
 # Note optionally add -x <pid> to limit data collection to 1 process
 #
@@ -24,6 +24,7 @@
 #    The oracle executable needs to be in the path, i.e. add $ORACLE_HOME/bin to $PATH
 #
 # Tested on: RHEL6.5, 6.6. and 7.0, Oracle 11.2.0.4, 12.1.0.1, 12.1.0.2
+#            note, currently does not work with RHEL 7.1.
 #
 # Author: Luca.Canali@cern.ch (@LucaCanaliDB)
 # Additional credits for original contributions: @FritsHoogland

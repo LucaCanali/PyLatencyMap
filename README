@@ -1,6 +1,6 @@
-PyLatencyMap v1.2.1 - Latest updates May 2015. 
-First release: version 1.0, September 2013.
-Author: Luca.Canali@cern.ch
+PyLatencyMap v1.2.3 - Latest updates July 2015. 
+First release: September 2013.
+Main author: Luca.Canali@cern.ch
 
 PyLatencyMap is a tool and set of scripts to collect and display latency heat maps from the command line interface. The original use for which PyLatencyMap has been developed is to measure and display storage latency data. PyLatencyMap can be used/extended to display heat maps from a generic source of latency data, ideally already structured as a latency histogram, but raw format is also possible.
 PyLatencyMap is written in python and has been tested with python 2.6 and 2.7. The tool works from the command line and requires terminal with support for ANSI graphics.
