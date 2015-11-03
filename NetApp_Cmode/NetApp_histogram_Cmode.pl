@@ -174,17 +174,21 @@ sub Main {
 			next;
 		} 
 		if ($stdout) {
-			@comodin= split / /,$_; 
+			@comodin= split /\n/,$_; 
 			last;
 		}
 	}
 	#cleanup
 	foreach (@comodin){
-		next if (length($_) == 0 );
+		next if (/^\s/);
 		next if (/-{1,}/);
-		chomp $_;
-		s/^\s+//;
-		push @params,$_ if (/\w+/); 
+		next if (length($_) == 0 );
+		my @arr = split /\s/,$_;
+		foreach (@arr) {
+			chomp $_;
+			s/^\s+//;
+			push @params,$_ if (/\w+/);
+		} 
 	} 
 	my %pairs;
 	if ((scalar(@params) % 2 ) != 0 ) {
