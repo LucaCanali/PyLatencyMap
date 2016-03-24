@@ -26,7 +26,6 @@ http://externaltable.blogspot.com/2015/07/heat-map-visualization-of-latency.html
 
 See also presentations and material at http://cern.ch/canali
 	
-
 ----	
 Frequency-Intensity Latency Heat Maps: 
 
@@ -74,6 +73,6 @@ See also an example in SampleData/example_latency_data.txt
 
 References and acknowledgements:
 The main source of inspiration for this work is Brendan Gregg’s ACM queue article "Visualizing System Latency" of May 2008 and the subsequent blog articles and tools described at http://www.brendangregg.com/HeatMaps/latency.html
-A tool for displaying storage latency using ANSI coloring has recently also been introduced in sysdig. See https://sysdigcloud.com/aws-storage-latency-sysdig-spectrogram/
+A tool for displaying storage latency using ANSI coloring has recently also been introduced in sysdig. See https://sysdig.com/aws-storage-latency-sysdig-spectrogram/
 
 
