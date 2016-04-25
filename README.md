@@ -26,8 +26,8 @@ Examples and getting started:
 PyLatencyMap comes with scripts and examples for SystemTap, DTrace, Oracle wait event interface, NetApp and for custom data collection scripts. 
 A series of example scripts are provided, feel free to experiment and extend. 
 Some pointers:
-- For investigating block I/O latency start with Example9_SystemTap_blockIO_req.sh: stap -v SystemTap/blockio_rq_issue_pylatencymap.stp 3 |python SystemTap/systemtap_connector.py |python LatencyMap.py
-- For investigating Oracle "db file sequential read events"" start with Example1_oracle_random_read.sh: sqlplus -S / as sysdba @Event_histograms_oracle/ora_latency.sql "db file sequential read" 3 | python LatencyMap.py
+- For investigating block I/O latency start with Example9_SystemTap_blockIO_req.sh: `stap -v SystemTap/blockio_rq_issue_pylatencymap.stp 3 |python SystemTap/systemtap_connector.py |python LatencyMap.py`
+- For investigating Oracle "db file sequential read events"" start with Example1_oracle_random_read.sh: `sqlplus -S / as sysdba @Event_histograms_oracle/ora_latency.sql "db file sequential read" 3 | python LatencyMap.py`
 
 	
 ----	
@@ -59,7 +59,7 @@ data_source | tee record_data_source | <optional connector script> | python Late
 cat record_data_source | <optional connector script> | python LatencyMap.py <options>
 
 Command line options:
-```python
+```
 --num_records=arg      : number of time intervals displayed, default is 90
 --min_bucket=arg       : the lower latency bucket value is 2^arg, default is -1 (autotune)
 --max_bucket=arg       : the highest latency bucket value is 2^arg, , default is 64 (autotune)
@@ -80,6 +80,7 @@ Notes on the custom Input Data Format:
 - See also an example in SampleData/example_latency_data.txt
 
 References and acknowledgements:
+
 The main source of inspiration for this work is Brendan Gregg’s ACM queue article "Visualizing System Latency" of May 2008 and the subsequent blog articles and tools described at http://www.brendangregg.com/HeatMaps/latency.html
 A tool for displaying storage latency using ANSI coloring has recently also been introduced in sysdig. See https://sysdig.com/aws-storage-latency-sysdig-spectrogram/
 
