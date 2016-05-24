@@ -3,7 +3,7 @@
 
 Main author: Luca.Canali@cern.ch
 
-First release: September 2013, latest updates: July 2015.
+First release: September 2013, latest updates: May 2016.
 
 Relevant blog articles and references:
 - http://externaltable.blogspot.com/2013/08/pylatencymap-performance-tool-to-drill.html
@@ -23,7 +23,7 @@ Example: data_source | <optional connector script> | python LatencyMap.py <optio
 
 Examples and getting started:
 
-PyLatencyMap comes with scripts and examples for SystemTap, DTrace, Oracle wait event interface, NetApp and for custom data collection scripts. 
+PyLatencyMap comes with scripts and examples for SystemTap, BPF/bcc, DTrace, Oracle wait event interface, NetApp and for custom data collection scripts. 
 A series of example scripts are provided, feel free to experiment and extend. 
 Some pointers:
 - For investigating block I/O latency start with Example9_SystemTap_blockIO_req.sh: `stap -v SystemTap/blockio_rq_issue_pylatencymap.stp 3 |python SystemTap/systemtap_connector.py |python LatencyMap.py`
@@ -45,13 +45,13 @@ Intensity/importance heat maps highlight the total weight that each latency buck
 For the purposes of this tool data for the intensity heat map is estimated from the same histogram data used for the frequency heat map (ideally it should come from separate counters for additional precision).
 
 PyLatencyMap: integrates a variety of latency data sources into a visualization engine. 
-One of the underlying ideas is to keep the tool structure simple and very close to command-line administration style. Three types of scripts are available and they work together in a chain: with a simple pipe operator the output of one step becomes the input of the next. Data source scripts to extract data in latency histogram format from Oracle, SystemTap DTrace, tracefiles, etc. 
+One of the underlying ideas is to keep the tool structure simple and very close to command-line administration style. Three types of scripts are available and they work together in a chain: with a simple pipe operator the output of one step becomes the input of the next. Data source scripts to extract data in latency histogram format from Oracle, SystemTap, BPF/bcc, DTrace, tracefiles, etc. 
 Data connector scripts may be needed to convert the data source data into the custom format used by the visualization engine. 
 Finally the visualization engine LatencyMap.py produces the Frequency-Intensity heat maps. 
 ANSI escape codes are the simple solution used to print color in a text environment.
 
 Currently available data sources and connectors: 
-SystemTap, Oracle wait event interface histograms, NetApp C-mode performance counters, DTrace, Oracle AWR event histogram data, Oracle 10046 trace data. 
+SystemTap, Oracle wait event interface histograms, BPF/bcc, NetApp C-mode performance counters, DTrace, Oracle AWR event histogram data, Oracle 10046 trace data. 
 For each of them example scripts are provided. More data sources may be added in future versions (contributions are welcome BTW).
 
 Tips on how to record and replay data_sources:
