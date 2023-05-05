@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
-# LatencyMap.py v1.2, first release: Sep 2013, latest updates: March 2015. 
+# LatencyMap.py v1.2.1, first release: Sep 2013, latest major updates: March 2015.
+# Updated from Python2 to Python3 in May 2023
 # By Luca.Canali@cern.ch
 #
 # This is a tool to plot latency heatmaps and assist in performance investigations of latency data.
@@ -44,8 +45,8 @@ class GlobalParameters:
             opts, args = getopt.getopt(sys.argv[1:], "hn:d:",["num_records=","min_bucket=","max_bucket=",
                          "latency_unit=","frequency_maxval=","intensity_maxval=","screen_delay=",
                          "debug_level=","help"])
-        except getopt.GetoptError, err:
-            print err
+        except getopt.GetoptError as err:
+            print(err)
             sys.exit(1)
         for opt, arg in opts:
             if opt in ('-h', '--help'): 
@@ -68,21 +69,21 @@ class GlobalParameters:
 
  
     def usage(self):
-        print 'LatencyMap.py v1.2, by Luca.Canali@cern.ch'
-        print 'This is a tool to plot latency heatmaps and assist in performance investigations of latency data.'
-        print 'Input: latency data histograms in a custom format'
-        print 'Output: Latency Heatmaps, Frequency heat map (IOPS study) and an intensity/importance heat map (wait time)'
-        print
-        print 'Usage: data_source| <optional connector script> | python LatencyMap.py <options>'
-        print  
-        print 'Options are:'
-        print '--num_records=arg      : number of time intervals displayed, default is 90'
-        print '--min_bucket=arg       : the lower latency bucket value is 2^arg, default is -1 (autotune)'
-        print '--max_bucket=arg       : the highest latency bucket value is 2^arg, , default is 64 (autotune)'
-        print '--frequency_maxval=arg : default is -1 (autotune)'
-        print '--intensity_maxval=arg : default is -1 (autotune)'
-        print '--screen_delay=arg     : used to add time delay when replaying trace files, default is 0.1 (sec)'
-        print '--debug_level=arg      : debug level, default is 0, 5 is max debug level'
+        print('LatencyMap.py v1.2, by Luca.Canali@cern.ch')
+        print('This is a tool to plot latency heatmaps and assist in performance investigations of latency data.')
+        print('Input: latency data histograms in a custom format')
+        print('Output: Latency Heatmaps, Frequency heat map (IOPS study) and an intensity/importance heat map (wait time)')
+        print()
+        print('Usage: data_source| <optional connector script> | python LatencyMap.py <options>')
+        print()  
+        print('Options are:')
+        print('--num_records=arg      : number of time intervals displayed, default is 90')
+        print('--min_bucket=arg       : the lower latency bucket value is 2^arg, default is -1 (autotune)')
+        print('--max_bucket=arg       : the highest latency bucket value is 2^arg, , default is 64 (autotune)')
+        print('--frequency_maxval=arg : default is -1 (autotune)')
+        print('--intensity_maxval=arg : default is -1 (autotune)')
+        print('--screen_delay=arg     : used to add time delay when replaying trace files, default is 0.1 (sec)')
+        print('--debug_level=arg      : debug level, default is 0, 5 is max debug level')
 
 
 
@@ -102,16 +103,16 @@ class LatencyRecord:
         self.data_source = g_params.default_data_source
 
     def print_record_debug(self):
-        print '\nLatest data record:' 
-        print self.data
+        print('\nLatest data record:') 
+        print(self.data)
 
     def get_new_line(self):
         while True:
            line = sys.stdin.readline()
            if not line:
-                print "\nReached EOF from data source, exiting."
+                print("\nReached EOF from data source, exiting.")
                 sys.exit(0)
-           if line.strip() <> '':
+           if line.strip() != '':
                return(line.lower().strip())    # return the line read from stdin, lowercase, strip 
 
     def go_to_begin_record_tag(self):
@@ -149,7 +150,7 @@ class LatencyRecord:
                     g_params.latency_unit = latency_unit
                 continue       # move to process next line          
 
-            if len(split_line) <> 2:          
+            if len(split_line) != 2:          
                 raise Exception('Cannot process record: '+ line)             # raise error condition
 
             # main record processing of latency data
@@ -207,7 +208,7 @@ class LatencyRecord:
             elif (self.data_source == 'systemtap' or self.data_source == 'dtrace'):
                  self.intensity_histogram[write_bucket] += (1.5 * delta_count * 2**bucket ) / time_factor
             else:
-                 print 'Invalid data source. Please use one of: systemtap, dtrace, oracle'
+                 print('Invalid data source. Please use one of: systemtap, dtrace, oracle')
                  exit(1)
 
         self.max_frequency = max(self.frequency_histogram)
@@ -224,14 +225,14 @@ class ArrayOfLatencyRecords:
         self.asciiescape_backtonormal = chr(27) + '[0m'
 
     def print_frequency_histograms_debug(self):
-        print '\nFrequency histograms:'
+        print('\nFrequency histograms:')
         for record in self.data:
-            print record.frequency_histogram, record.delta_time
+            print(record.frequency_histogram, record.delta_time)
 
     def print_intensity_histograms_debug(self):
-        print '\nIntensity histograms:'
+        print('\nIntensity histograms:')
         for record in self.data:
-            print record.intensity_histogram, record.delta_time
+            print(record.intensity_histogram, record.delta_time)
 
     def add_new_record(self, record):
         self.data = self.data[1:len(self.data)]
@@ -273,7 +274,7 @@ class ArrayOfLatencyRecords:
         if g_params.debug_level < 2:
             line += chr(27) + '[0m' + chr(27) + '[2J' + chr(27) + '[H'   # clear screen and move cursor to top line
         line += 'LatencyMap.py v1.2 - Luca.Canali@cern.ch'
-        print line
+        print(line)
 
     def print_footer(self):
         total_intensity = 0
@@ -297,15 +298,15 @@ class ArrayOfLatencyRecords:
         line += '. Average latency of latest values: '
         line += self.value_to_string(latest_avg_latency)
         line += ' '+ g_params.latency_unit 
-        print line
+        print(line)
         # record = self.data[len(self.data)-1]
         line = 'Sample num: ' + str(self.sample_number) 
         line += '. Delta time: '                              # note timestamp is in microsec, convert to second
         line += str(round(record.delta_time/1e6,1))     
         line += ' sec. Date: ' + record.date.upper()
-        print line
-        if record.label <> '':
-            print 'Label: ' + record.label
+        print(line)
+        if record.label != '':
+            print('Label: ' + record.label)
 
     def print_heat_map(self, type):                                 # type can be 'Frequency' or 'Intensity'
 
@@ -324,17 +325,17 @@ class ArrayOfLatencyRecords:
 
         # graph header
         line = '\nLatency bucket'
-        line = line.ljust(g_params.num_latency_records/2 - 10)
-        line += chart_title 
+        line = line.ljust(g_params.num_latency_records//2 - 10)
+        line += chart_title
         line = line.ljust(g_params.num_latency_records + 2)
         line += 'Latest values'
         if g_params.print_legend:
             line += '    Legend'
-        print line 
+        print(line) 
         line = '(' + g_params.latency_unit + ')'   
         line = line.ljust(g_params.num_latency_records - len(unit) + 14)
         line += unit 
-        print line 
+        print(line) 
 
         # main part of the graph
         if params_maxval == -1:
@@ -392,7 +393,7 @@ class ArrayOfLatencyRecords:
                     line += '    ' + 'Max: ' + self.value_to_string(chart_maxval)
                 elif line_num == (g_params.max_latency_bkt-g_params.min_latency_bkt):  #last line of the heatmap
                     line += '    ' + 'Max(Sum):'
-            print line 
+            print(line) 
 
         # trailing part of the graph
         line = '      ' 
@@ -406,7 +407,7 @@ class ArrayOfLatencyRecords:
             line = line.ljust(g_params.num_latency_records + 3)
             line += 'Sum:' + self.value_to_string(record.sum_intensity).rjust(7,'.')
             line += '    ' + self.value_to_string(max([record.sum_intensity for record in self.data]))
-        print line + '\n'
+        print(line + '\n')
 
 def main():
     my_chart_data = ArrayOfLatencyRecords()
@@ -417,7 +418,7 @@ def main():
         myrecord.go_to_begin_record_tag()        # read and discard everything till the <begin data> tag
         try:
             myrecord.read_record()               # read record values
-        except Exception, err:
+        except Exception as err:
             sys.stderr.write('ERROR: %s\n' % str(err))
             return 1
         if g_params.debug_level >= 2:
