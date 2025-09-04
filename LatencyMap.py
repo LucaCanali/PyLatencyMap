@@ -1,453 +1,542 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
-# LatencyMap.py v1.2.1, first release: Sep 2013, latest major updates: March 2015.
-# Updated from Python2 to Python3 in May 2023
-# By Luca.Canali@cern.ch
-#
-# This is a tool to plot latency heatmaps and assist in performance investigations of latency data.
-# Input: latency data histograms (in a custom format)
-# Output: colored Latency Heatmaps. A frequency heatmap (IOPS) and an intensity heatmap (wait time)
-# See README for more info and also http://cern.ch/canali/resources.htm and 
-# http://externaltable.blogspot.com/2013/09/getting-started-with-pylatencymap.html
-#
-# Usage: data_source|<optional connector script> | python LatencyMap.py <options>
-# Help: python LatencyMap.py -h
-#
+"""
+LatencyMap.py — CLI heat maps for latency histograms
+Version: 1.3 (Sep 2025)
+Author: Luca.Canali@cern.ch
+License: Apache v2.0 (see LICENSE)
 
+Overview
+  Render two scrolling terminal heat maps from streaming latency histograms:
+    • Frequency  — events/sec per latency bucket (IOPS-like)
+    • Intensity  — time waited per sec (unit/sec; left-axis labels shown in ms)
+
+Input format (unchanged)
+  Stream **tagged** records to stdin; buckets are base-2 upper bounds with **cumulative counts**.
+    <begin record>
+    timestamp,microsec,<epoch_usecs>,<human_readable_ts>
+    latencyunit,<millisec|microsec|nanosec>
+    label,<free text>
+    datasource,<bpf|systemtap|dtrace|oracle>
+    <power_of_two_value>,<cumulative_count>
+    ...
+    <end record>
+
+  Notes:
+    - 'latencyunit' applies to bucket values; Y-axis labels are always rendered in **ms**.
+    - Counts must be cumulative per bucket; the tool computes per-interval deltas → rates.
+    - Intensity approximation depends on 'datasource':
+        oracle    ≈ 0.75 * bucket_value * waits
+        bpf       ≈ 1.50 * bucket_value * waits
+        systemtap ≈ 1.50 * bucket_value * waits
+        dtrace    ≈ 1.50 * bucket_value * waits
+
+CLI (see --help)
+  --num_records INT       Number of columns (time window). Default: 90
+  --min_bucket INT        Lower bucket exponent (log2). -1 = autotune
+  --max_bucket INT        Upper bucket exponent (log2). 64 = autotune
+  --frequency_maxval F    Fix frequency color scale max; -1 = auto
+  --intensity_maxval F    Fix intensity color scale max; -1 = auto
+  --screen_delay FLOAT    Delay between frames (sec). Default: 0.1
+  --debug_level INT       Verbosity 0..5. Default: 0
+
+Examples
+  # From a live source
+  data_source | latencymap --num_records=120
+
+  # Module invocation
+  data_source | python -m LatencyMap -n 120
+
+  # Replay sample data
+  cat SampleData/example_latency_data.txt | latencymap --screen_delay=0.2
+
+Requirements
+  Python 3.x and a terminal with ANSI color support.
+"""
+
+from __future__ import annotations
 import sys
-import getopt
+import argparse
 import math
 import time
+from typing import Dict, List
+
+# ----------------------------- Parameters & CLI ----------------------------- #
 
 class GlobalParameters:
-    def __init__(self):
-        self.num_latency_records = 90  # size of the graph in the x directionm, i.e. num of time intervals displayed
-        self.min_latency_bkt = -1   # lower latency bucket value, -1 means autotune 
-        self.max_latency_bkt = 64   # highest latency bucket value, 64 means autotune 
-        self.frequency_maxval = -1  # -1 means auto tuning of max value, otherwise put here a fixed number
-        self.intensity_maxval = -1  # -1 means auto tuning of max value, otherwise put here a fixed number
-        self.debug_level = 0        # 5 is max debug level
-        self.print_legend = True    # set to False to turn off printing this part of the graph
-        self.frequency_map = True   # set to False to turn off printing this part of the graph
-        self.intensity_map = True   # set to False to turn off printing this part of the graph
-        self.screen_delay = 0.1     # delay (in sec) between screens, useful to slow down when working from trace files
-        self.latency_unit = 'millisec'  # this is the default, valid values are millisec, microsec and nanosec
-        self.begin_tag = '<begin record>'
-        self.end_tag = '<end record>'
-        self.latencyunit_tag = 'latencyunit'
-        self.label_tag = 'label'
-        self.label_data_source = 'datasource'
-        self.default_data_source = 'systemtap' # valid values: systemtap, dtrace, oracle
+    """
+    Global parameters parsed from CLI, with sensible defaults
+    """
+    def __init__(self) -> None:
+        # Chart/window width (time axis)
+        self.num_latency_records: int = 90
 
+        # Buckets are log2(power-of-two value in the given latency unit).
+        # -1 means autotune min; 64 was used as a sentinel for autotune max.
+        self.min_latency_bkt: int = -1  # lower bucket (log2)
+        self.max_latency_bkt: int = 64  # upper bucket (log2), 64 => autotune
 
-    def get_options(self):
-        try:
-            opts, args = getopt.getopt(sys.argv[1:], "hn:d:",["num_records=","min_bucket=","max_bucket=",
-                         "latency_unit=","frequency_maxval=","intensity_maxval=","screen_delay=",
-                         "debug_level=","help"])
-        except getopt.GetoptError as err:
-            print(err)
-            sys.exit(1)
-        for opt, arg in opts:
-            if opt in ('-h', '--help'): 
-                # self.usage()  no need as usage is printed by default
-                sys.exit(1)
-            if opt in ('-d', '--debug_level'): 
-                self.debug_level = int(arg)
-            if opt in('-n', '--num_records'): 
-                self.num_latency_records =int(arg)
-            if opt == '--min_bucket': 
-                self.min_latency_bkt = int(arg)
-            if opt == '--max_bucket': 
-                self.max_latency_bkt = int(arg) + 1
-            if opt == '--frequency_maxval': 
-                self.frequency_maxval = 1.2 * int(arg) # maxval becomes the base for the highest bucket 
-            if opt == '--intensity_maxval': 
-                self.intensity_maxval = 1.2 * int(arg) # maxval becomes the base for the highest bucket 
-            if opt == '--screen_delay': 
-                self.screen_delay = float(arg)
+        # Auto scaling for colors unless overridden (>0 to fix scale)
+        self.frequency_maxval: float = -1
+        self.intensity_maxval: float = -1
 
- 
-    def usage(self):
-        print('LatencyMap.py v1.2, by Luca.Canali@cern.ch')
-        print('This is a tool to plot latency heatmaps and assist in performance investigations of latency data.')
-        print('Input: latency data histograms in a custom format')
-        print('Output: Latency Heatmaps, Frequency heat map (IOPS study) and an intensity/importance heat map (wait time)')
-        print()
-        print('Usage: data_source| <optional connector script> | python LatencyMap.py <options>')
-        print()  
-        print('Options are:')
-        print('--num_records=arg      : number of time intervals displayed, default is 90')
-        print('--min_bucket=arg       : the lower latency bucket value is 2^arg, default is -1 (autotune)')
-        print('--max_bucket=arg       : the highest latency bucket value is 2^arg, , default is 64 (autotune)')
-        print('--frequency_maxval=arg : default is -1 (autotune)')
-        print('--intensity_maxval=arg : default is -1 (autotune)')
-        print('--screen_delay=arg     : used to add time delay when replaying trace files, default is 0.1 (sec)')
-        print('--debug_level=arg      : debug level, default is 0, 5 is max debug level')
+        self.debug_level: int = 0
+        self.print_legend: bool = True
+        self.frequency_map: bool = True
+        self.intensity_map: bool = True
 
+        # Delay between frames (useful when replaying traces)
+        self.screen_delay: float = 0.1
 
+        # Unit of incoming bucket values (impacts labels & autotune min)
+        # Valid: 'millisec', 'microsec', 'nanosec'
+        self.latency_unit: str = 'millisec'
 
-# this is the base class used to collect and store latency data, see also ArrayOfLatencyRecords
+        # Tags/string constants (unchanged)
+        self.begin_tag: str = '<begin record>'
+        self.end_tag: str = '<end record>'
+        self.latencyunit_tag: str = 'latencyunit'
+        self.label_tag: str = 'label'
+        self.label_data_source: str = 'datasource'
+        self.default_data_source: str = 'bpf'  # bpf, systemtap, dtrace, oracle
+
+    def parse_cli(self, argv: list[str] | None = None) -> None:
+        parser = argparse.ArgumentParser(
+            prog="LatencyMap.py",
+            description="Plot CLI heatmaps (frequency & intensity) from latency histograms."
+        )
+        parser.add_argument("--num_records", "-n", type=int, default=self.num_latency_records,
+                            help="Number of time intervals displayed (default: 90).")
+        parser.add_argument("--min_bucket", type=int, default=self.min_latency_bkt,
+                            help="Lower bucket exponent (log2). -1 = autotune (default).")
+        parser.add_argument("--max_bucket", type=int, default=self.max_latency_bkt,
+                            help="Upper bucket exponent (log2). 64 = autotune (default).")
+        parser.add_argument("--frequency_maxval", type=float, default=self.frequency_maxval,
+                            help="Max color scale for frequency map; -1 = auto (default).")
+        parser.add_argument("--intensity_maxval", type=float, default=self.intensity_maxval,
+                            help="Max color scale for intensity map; -1 = auto (default).")
+        parser.add_argument("--screen_delay", type=float, default=self.screen_delay,
+                            help="Delay (sec) between screens (default: 0.1).")
+        parser.add_argument("--debug_level", "-d", type=int, default=self.debug_level,
+                            help="Debug level 0..5 (default: 0).")
+
+        # Parse provided argv or default to sys.argv[1:]
+        args = parser.parse_args(argv)
+
+        self.num_latency_records = args.num_records
+        self.min_latency_bkt = args.min_bucket
+        self.max_latency_bkt = args.max_bucket
+        self.frequency_maxval = -1 if args.frequency_maxval is None else args.frequency_maxval
+        self.intensity_maxval = -1 if args.intensity_maxval is None else args.intensity_maxval
+        self.screen_delay = args.screen_delay
+        self.debug_level = args.debug_level
+
+    def usage_banner(self) -> None:
+        print("LatencyMap.py v1.3 - Luca.Canali@cern.ch")
+        print("CLI heatmaps for latency histograms (frequency & intensity).")
+
+g_params = GlobalParameters()  # Initialized in __main__
+
+# --------------------------- Data types & helpers --------------------------- #
+
 class LatencyRecord:
-    def __init__(self):
-        self.data = {} 
-        self.frequency_histogram = [0 for x in range(0, g_params.max_latency_bkt + 1)]
-        self.intensity_histogram = [0 for x in range(0, g_params.max_latency_bkt + 1)]
-        self.delta_time = 0
-        self.max_frequency = 0
-        self.sum_frequency = 0
-        self.max_intensity = 0
-        self.sum_intensity = 0
-        self.date = ''
-        self.label = ''
-        self.data_source = g_params.default_data_source
+    """
+    One sampling record of latency data.
+    Holds frequency & intensity histograms (buckets in log2 indices).
+    """
+    def __init__(self) -> None:
+        # Raw data: exponent-> cumulative count at timestamp. Special keys: 'timestamp'
+        self.data: Dict[int | str, int] = {}
 
-    def print_record_debug(self):
-        print('\nLatest data record:') 
-        print(self.data)
+        # Pre-allocate with a generous upper bound; safe even after autotune shrinks the range.
+        self.frequency_histogram: List[float] = [0.0 for _ in range(0, 65)]
+        self.intensity_histogram: List[float] = [0.0 for _ in range(0, 65)]
 
-    def get_new_line(self):
+        self.delta_time: int = 0  # microseconds between this and previous record
+        self.max_frequency: float = 0.0
+        self.sum_frequency: float = 0.0
+        self.max_intensity: float = 0.0
+        self.sum_intensity: float = 0.0
+        self.date: str = ''
+        self.label: str = ''
+        self.data_source: str = g_params.default_data_source
+
+    # ---------------------- Input parsing & record IO ---------------------- #
+
+    @staticmethod
+    def _read_non_empty_line_lower_stripped() -> str:
         while True:
-           line = sys.stdin.readline()
-           if not line:
+            line = sys.stdin.readline()
+            if not line:
                 print("\nReached EOF from data source, exiting.")
                 sys.exit(0)
-           if line.strip() != '':
-               return(line.lower().strip())    # return the line read from stdin, lowercase, strip 
+            line = line.strip()
+            if line:
+                return line.lower()
 
-    def go_to_begin_record_tag(self):
+    def go_to_begin_record_tag(self) -> None:
         while True:
-            line = self.get_new_line() 
-            if line == g_params.begin_tag:        
-                return            # found the begin data tag, so return   
+            if self._read_non_empty_line_lower_stripped() == g_params.begin_tag:
+                return
 
-    def read_record(self):
+    def read_record(self) -> None:
         while True:
-            line = self.get_new_line()
-            split_line = line.split(',')                                     # split input into csv elements
+            line = self._read_non_empty_line_lower_stripped()
+            split_line = [x.strip() for x in line.split(",")]
 
-            if len(split_line) == 1 and split_line[0].strip() == g_params.end_tag:
-                return(0)                                                    # exit read_record, clean condition
+            # End-of-record
+            if len(split_line) == 1 and split_line[0] == g_params.end_tag:
+                return
 
-            if len(split_line) == 4 and split_line[0].strip() == 'timestamp' and split_line[1].strip() == 'microsec':
-                self.data['timestamp'] = int(split_line[2].strip())     # timestamp in numeric form
-                self.date = split_line[3].strip()                       # timestamp in human-readable format
-                continue        # move to process next line                
+            # Header / meta lines
+            if len(split_line) == 4 and split_line[0] == 'timestamp' and split_line[1] == 'microsec':
+                self.data['timestamp'] = int(split_line[2])
+                self.date = split_line[3]
+                continue
 
-            if len(split_line) == 2 and split_line[0].strip() == g_params.label_tag:
-                self.label = split_line[1].strip()                       # optional label
-                continue       # move to process next line          
+            if len(split_line) == 2 and split_line[0] == g_params.label_tag:
+                self.label = split_line[1]
+                continue
 
-            if len(split_line) == 2 and split_line[0].strip() == g_params.label_data_source:
-                self.data_source = split_line[1].strip()                       # optional data source name
-                continue       # move to process next line          
+            if len(split_line) == 2 and split_line[0] == g_params.label_data_source:
+                self.data_source = split_line[1]
+                continue
 
-            if len(split_line) == 2 and split_line[0].strip() == g_params.latencyunit_tag:
-                latency_unit = split_line[1].strip()                     # latency unit (millisec, microsec, nanosec)
-                if latency_unit not in ('millisec', 'microsec', 'nanosec'):
-                    raise Exception('Cannot understand latency unit: '+ line) 
-                else:
-                    g_params.latency_unit = latency_unit
-                continue       # move to process next line          
+            if len(split_line) == 2 and split_line[0] == g_params.latencyunit_tag:
+                unit = split_line[1]
+                if unit not in ('millisec', 'microsec', 'nanosec'):
+                    raise ValueError(f"Cannot understand latency unit in line: {line!r}")
+                g_params.latency_unit = unit
+                continue
 
-            if len(split_line) != 2:          
-                raise Exception('Cannot process record: '+ line)             # raise error condition
+            # Data lines: <power_of_two_value>,<count>
+            if len(split_line) != 2:
+                raise ValueError(f"Cannot process record line: {line!r}")
 
-            # main record processing of latency data
             try:
-                bucket = int(split_line[0].strip())
-                value  = int(split_line[1].strip())
-                bucket = math.log(bucket,2)    # we expect bucket values that are powers of 2
-            except:
-                    raise Exception('Cannot understand data: '+ line)        # raise error condition  
+                power_of_two_val = int(split_line[0])
+                count = int(split_line[1])
+                bucket = math.log(power_of_two_val, 2.0)
+            except Exception as exc:
+                raise ValueError(f"Cannot parse data line: {line!r} ({exc})") from exc
 
-            if abs(int(bucket) - bucket) > 1e-6:                             # account for log computation errors
-                raise Exception('Bucket value must be power of 2: '+ line)   # raise error condition  
+            if abs(int(bucket) - bucket) > 1e-6:
+                raise ValueError(f"Bucket value must be a power of 2: {line!r}")
             bucket = int(bucket)
 
-            self.data[bucket] = self.data.get(bucket, 0) + value             # add new data point 
+            # Keep cumulative count for this exponent bucket
+            self.data[bucket] = self.data.get(bucket, 0) + count
 
-    def autotune_latency_buckets(self):
-        if g_params.min_latency_bkt == -1:    # this computes values for autotune mode
-             g_params.min_latency_bkt= {'millisec':0, 'microsec':8, 'nanosec':18}[g_params.latency_unit]
+    # ----------------------- Computations & autotune ----------------------- #
 
-        if g_params.max_latency_bkt == 64:    # this computes values for autotune mode
+    @staticmethod
+    def _autotune_latency_buckets() -> None:
+        """
+        Compute min/max buckets for the heatmap window on first record.
+        - For microsecond inputs (typical), default min is 2^7 µs (128 µs).
+        - Display still uses milliseconds for the left axis labels.
+        """
+        if g_params.min_latency_bkt == -1:
+            g_params.min_latency_bkt = {
+                'millisec': 0,   # 1 ms
+                'microsec': 7,   # 128 µs (v1.3 default)
+                'nanosec': 17,   # 131,072 ns (~0.131 ms)
+            }[g_params.latency_unit]
+
+        if g_params.max_latency_bkt == 64:
+            # ~12 buckets vertically by default (min .. min+11)
             g_params.max_latency_bkt = g_params.min_latency_bkt + 11
 
-    def compute_deltas(self, previous_record):
+    def compute_deltas(self, previous: 'LatencyRecord') -> None:
+        # timestamp delta (usec); convert to seconds for rates
+        self.delta_time = self.data.get('timestamp', 0) - previous.data.get('timestamp', 0)
+        time_factor = self.delta_time / 1e6 if self.delta_time > 0 else 1.0
 
-        # compute timestamp deltas if data available, otherwise it will be 0
-        self.delta_time = self.data.get('timestamp',0) - previous_record.data.get('timestamp',0)
-        if self.delta_time > 0:
-            time_factor = self.delta_time / 1e6           # timestamps are in microsec, need to convert to sec
-        else:
-            time_factor = 1                               # cover the case where timestamps are not used
-        for bucket in self.data:
+        for bucket in list(self.data.keys()):
             if bucket == 'timestamp':
-                continue                                  # this is a special value, the following does not apply
-            write_bucket = bucket                         # default  for write_bucket = data.bucket 
-            if bucket > g_params.max_latency_bkt:             
-                write_bucket = g_params.max_latency_bkt   # catchall bucket for high values
-            if bucket < g_params.min_latency_bkt:    
-                write_bucket = g_params.min_latency_bkt   # collapse low latency values into lower bucket
+                continue
 
-            # compute the frequency array 
-            delta_count = self.data.get(bucket,0) - previous_record.data.get(bucket,0)
+            write_bucket = bucket
+            if bucket > g_params.max_latency_bkt:
+                write_bucket = g_params.max_latency_bkt
+            if bucket < g_params.min_latency_bkt:
+                write_bucket = g_params.min_latency_bkt
+
+            delta_count = self.data.get(bucket, 0) - previous.data.get(bucket, 0)
+            # Frequency: events per second
             self.frequency_histogram[write_bucket] += (delta_count / time_factor)
 
-            # compute the intensity/importance/time waited array 
-            # SystemTap and DTrace count events in latency histograms differently than Oracle
-            # This is of importance when calculating the Intensity/Time waited latency map
-            # Example: value 5 goes in bucket 8 for Oracle and bucket 4 for SystemTap and DTrace
-            # This different behavior needs to be accounted for with 2 different formular differing by a factor 2. 
-            # For Oracle the approximated time waited in a given bucket is 3/4 of latency bucket value * number of waits
-            # For SystemTap/DTrace the approximated time waited is 3/2 of latency bucket value * number of waits
-
+            # Intensity: approximate time waited per second
+            # Oracle histograms bucket differently vs BPF/SystemTap/DTrace (factor-of-2 difference).
+            # Oracle: ~ 3/4 * bucket_value * waits; ST/DTrace: ~ 3/2 * bucket_value * waits
             if self.data_source == 'oracle':
-                 self.intensity_histogram[write_bucket] += (0.75 * delta_count * 2**bucket ) / time_factor
-            elif (self.data_source == 'systemtap' or self.data_source == 'dtrace'):
-                 self.intensity_histogram[write_bucket] += (1.5 * delta_count * 2**bucket ) / time_factor
+                self.intensity_histogram[write_bucket] += (0.75 * delta_count * (2 ** bucket)) / time_factor
+            elif self.data_source in ('bpf', 'systemtap', 'dtrace'):
+                self.intensity_histogram[write_bucket] += (1.5 * delta_count * (2 ** bucket)) / time_factor
             else:
-                 print('Invalid data source. Please use one of: systemtap, dtrace, oracle')
-                 exit(1)
+                raise ValueError("Invalid datasource. Use one of: bpf, systemtap, dtrace, oracle.")
 
-        self.max_frequency = max(self.frequency_histogram)
-        self.sum_frequency = sum(self.frequency_histogram)
-        self.max_intensity = max(self.intensity_histogram)
-        self.sum_intensity = sum(self.intensity_histogram)
+        self.max_frequency = max(self.frequency_histogram[g_params.min_latency_bkt:g_params.max_latency_bkt + 1])
+        self.sum_frequency = sum(self.frequency_histogram[g_params.min_latency_bkt:g_params.max_latency_bkt + 1])
+        self.max_intensity = max(self.intensity_histogram[g_params.min_latency_bkt:g_params.max_latency_bkt + 1])
+        self.sum_intensity = sum(self.intensity_histogram[g_params.min_latency_bkt:g_params.max_latency_bkt + 1])
 
 
 class ArrayOfLatencyRecords:
-    def __init__(self):
-        zero_record = LatencyRecord()
-        self.sample_number = 0 
-        self.data = [zero_record for x in range(0, g_params.num_latency_records + 1)] 
-        self.asciiescape_backtonormal = chr(27) + '[0m'
+    """
+    Holds the scrolling window (time axis) of LatencyRecord objects.
+    """
+    BLUE_PALETTE = {0: 15, 1: 51, 2: 45, 3: 39, 4: 33, 5: 27, 6: 21}    # white→deep blue bg
+    RED_PALETTE = {0: 15, 1: 226, 2: 220, 3: 214, 4: 208, 5: 202, 6: 196}  # white→red bg
+    ESC_RESET = "\x1b[0m"
 
-    def print_frequency_histograms_debug(self):
+    def __init__(self) -> None:
+        self.sample_number: int = 0
+        # IMPORTANT: create distinct empty records (no shared reference)
+        self.data: List[LatencyRecord] = [LatencyRecord() for _ in range(0, g_params.num_latency_records + 1)]
+
+    # ------------------------------- Debug -------------------------------- #
+
+    def print_frequency_histograms_debug(self) -> None:
         print('\nFrequency histograms:')
         for record in self.data:
             print(record.frequency_histogram, record.delta_time)
 
-    def print_intensity_histograms_debug(self):
+    def print_intensity_histograms_debug(self) -> None:
         print('\nIntensity histograms:')
         for record in self.data:
             print(record.intensity_histogram, record.delta_time)
 
-    def add_new_record(self, record):
-        self.data = self.data[1:len(self.data)]
-        self.data.append(record)
+    # ------------------------------ Charting ------------------------------ #
+
+    def add_new_record(self, record: LatencyRecord) -> None:
+        # Scroll window: discard oldest, append newest
+        self.data = self.data[1:] + [record]
         self.sample_number += 1
 
-    def asciiescape_color(self, token, palette):
-        blue_palette = {0:15, 1:51, 2:45, 3:39, 4:33, 5:27, 6:21}        # shades of blue: white-light blue-dark blue
-        red_palette  = {0:15, 1:226, 2:220, 3:214, 4:208, 5:202, 6:196}  # white-yellow-red palette
+    @staticmethod
+    def _bg_color(token: int, palette: str) -> str:
         if palette == 'blue':
-            color_asciival = blue_palette[token]
+            c = ArrayOfLatencyRecords.BLUE_PALETTE[token]
         elif palette == 'red':
-            color_asciival = red_palette[token]
+            c = ArrayOfLatencyRecords.RED_PALETTE[token]
         else:
-            raise Exception('Wrong or missing palette name.')
-            exit(1)
-        return(chr(27) + '[48;5;' + str(color_asciival) + 'm')
+            raise ValueError("palette must be 'blue' or 'red'")
+        return f"\x1b[48;5;{c}m"
 
-    def bucket_to_string_with_suffix(self, bucket):
-        if int(bucket/10) > 4:
-            raise Exception('Cannot handle the number')   
-        suffix = {0:'', 1:'k', 2:'m', 3:'g', 4:'t'}[int(bucket/10)]
-        bucket_normalized = bucket % 10
-        return( str(2**bucket_normalized) + suffix )
+    @staticmethod
+    def _fmt_value(v: float) -> str:
+        if v < 0:
+            return "0"
+        if v <= 9:
+            return f"{v:.1g}"
+        if v < 1_000_000:
+            return str(int(round(v)))
+        return f"{v:.2g}"
 
-    def value_to_string(self,value):
-        if value < 0:
-            raise Exception('Cannot handle negative numbers') 
-        elif value <= 9: 
-            mystring = "%.1g" % value          # one decimal digit for numbers less than 10
-        elif value < 1000000:
-            mystring = str(int(round(value)))  # integer value, 6 digits
+    @staticmethod
+    def _bucket_ms_label(bucket_exp: int) -> str:
+        """
+        Render the bucket upper bound as milliseconds for the left axis.
+        - Always display in ms.
+        - For <1ms: show with leading dot, e.g., .512
+        - For >=1ms: show integer without leading dot: 1, 2, 4, 8, ...
+        - Top line uses >prev, bottom uses <current (collapsed).
+        """
+        # Convert the bucket exponent (in given unit) to microseconds first
+        # then to milliseconds for display.
+        if g_params.latency_unit == 'millisec':
+            usec = (2 ** bucket_exp) * 1000.0
+        elif g_params.latency_unit == 'microsec':
+            usec = float(2 ** bucket_exp)
+        else:  # 'nanosec'
+            usec = (2 ** bucket_exp) / 1000.0
+
+        ms = usec / 1000.0
+        if ms < 1.0:
+            # Round to 3 decimals in base-2 friendly steps (.512, .256, ...)
+            # The input steps already are powers of two ⇒ a simple format works
+            s = f"{ms:.3f}".lstrip("0")
+            return s
         else:
-            mystring = "%.2g" % value          # exponential notation for numbers >=1e6
-        return(mystring)
+            # For 1, 2, 4, 8, ... show as integer without trailing .0
+            # (safe because steps are exact powers of two)
+            return str(int(round(ms)))
 
-    def print_header(self):
-        line = ''
+    def _print_header(self) -> None:
         if g_params.debug_level < 2:
-            line += chr(27) + '[0m' + chr(27) + '[2J' + chr(27) + '[H'   # clear screen and move cursor to top line
-        line += 'LatencyMap.py v1.2 - Luca.Canali@cern.ch'
-        print(line)
+            # Clear screen & home cursor
+            print("\x1b[0m\x1b[2J\x1b[H", end="")
+        print("LatencyMap.py v1.3 - Luca.Canali@cern.ch")
 
-    def print_footer(self):
-        total_intensity = 0
-        total_frequency = 0
-        for record in self.data:
-            total_intensity += record.sum_intensity
-            total_frequency += record.sum_frequency
-        latest_intensity = record.sum_intensity
-        latest_frequency = record.sum_frequency
-        if total_frequency > 0:
-            total_avg_latency = total_intensity/total_frequency  
-        else:
-            total_avg_latency = 0
-        if latest_frequency > 0:
-            latest_avg_latency = latest_intensity/latest_frequency
-        else:
-            latest_avg_latency = 0
-        line = 'Average latency: '
-        line += self.value_to_string(total_avg_latency)
-        line += ' '+ g_params.latency_unit 
-        line += '. Average latency of latest values: '
-        line += self.value_to_string(latest_avg_latency)
-        line += ' '+ g_params.latency_unit 
-        print(line)
-        # record = self.data[len(self.data)-1]
-        line = 'Sample num: ' + str(self.sample_number) 
-        line += '. Delta time: '                              # note timestamp is in microsec, convert to second
-        line += str(round(record.delta_time/1e6,1))     
-        line += ' sec. Date: ' + record.date.upper()
-        print(line)
-        if record.label != '':
-            print('Label: ' + record.label)
+    def _print_footer(self) -> None:
+        total_intensity = sum(r.sum_intensity for r in self.data)
+        total_frequency = sum(r.sum_frequency for r in self.data)
+        last = self.data[-1]
 
-    def print_heat_map(self, type):                                 # type can be 'Frequency' or 'Intensity'
+        total_avg = (total_intensity / total_frequency) if total_frequency > 0 else 0.0
+        latest_avg = (last.sum_intensity / last.sum_frequency) if last.sum_frequency > 0 else 0.0
 
-        if type == 'Frequency':
+        # Note: display average in the configured latency unit string (kept from v1.2 behavior)
+        print(f"Average latency: {self._fmt_value(total_avg)} {g_params.latency_unit}. "
+              f"Average latency of latest values: {self._fmt_value(latest_avg)} {g_params.latency_unit}")
+
+        print(f"Sample num: {self.sample_number}. "
+              f"Delta time: {round(last.delta_time/1e6, 1)} sec. "
+              f"Date: {last.date.upper()}")
+        if last.label:
+            print(f"Label: {last.label}")
+
+    def _print_heat_map(self, chart_type: str) -> None:
+        assert chart_type in ('Frequency', 'Intensity')
+        if chart_type == 'Frequency':
             params_maxval = g_params.frequency_maxval
-            params_color = 'blue'
-            chart_maxval = max([record.max_frequency for record in self.data]) 
-            chart_title = 'Frequency Heatmap: events per sec'
+            palette = 'blue'
+            chart_maxval = max(r.max_frequency for r in self.data)
+            title = 'Frequency Heatmap: events per sec'
             unit = '(N#/sec)'
-        elif type == 'Intensity':
-            params_maxval = g_params.intensity_maxval
-            params_color = 'red'
-            chart_maxval = max([record.max_intensity for record in self.data]) 
-            chart_title = 'Intensity Heatmap: time waited per sec'
-            unit= '(' + g_params.latency_unit + '/sec)'
-
-        # graph header
-        line = '\nLatency bucket'
-        line = line.ljust(g_params.num_latency_records//2 - 10)
-        line += chart_title
-        line = line.ljust(g_params.num_latency_records + 2)
-        line += 'Latest values'
-        if g_params.print_legend:
-            line += '    Legend'
-        print(line) 
-        line = '(' + g_params.latency_unit + ')'   
-        line = line.ljust(g_params.num_latency_records - len(unit) + 14)
-        line += unit 
-        print(line) 
-
-        # main part of the graph
-        if params_maxval == -1:
-            max_val = chart_maxval                                  # this is the auto tuning case
         else:
-            max_val = params_maxval                                 # this is the manual setting case
+            params_maxval = g_params.intensity_maxval
+            palette = 'red'
+            chart_maxval = max(r.max_intensity for r in self.data)
+            title = 'Intensity Heatmap: time waited per sec'
+            unit = f"({g_params.latency_unit}/sec)"
 
-        line_num = -1
+        # Header line
+        left_axis_title = "Latency bucket"
+        line = left_axis_title.ljust(max(16, g_params.num_latency_records // 2 - 10))
+        line += title
+        line = line.ljust(g_params.num_latency_records + 2)
+        line += "Latest values"
+        if g_params.print_legend:
+            line += "    Legend"
+        print(line)
+
+        line = "(millisec)".ljust(max(16, g_params.num_latency_records - len(unit) + 14))
+        line += unit
+        print(line)
+
+        # Determine color scale
+        max_val = chart_maxval if params_maxval == -1 else params_maxval
+
+        # Main map
+        row_idx = -1
         for bucket in range(g_params.max_latency_bkt, g_params.min_latency_bkt - 1, -1):
+            row_idx += 1
 
-            line_num += 1
-            # print scale values on the left of the graph
-            if bucket == g_params.max_latency_bkt:           
-                line = '>' + self.bucket_to_string_with_suffix(bucket - 1)
+            # Left axis label
+            if bucket == g_params.max_latency_bkt:
+                label = ">" + self._bucket_ms_label(bucket - 1)
             elif bucket == g_params.min_latency_bkt:
-                line = '<' + self.bucket_to_string_with_suffix(bucket)
+                label = "<" + self._bucket_ms_label(bucket)
             else:
-                line = self.bucket_to_string_with_suffix(bucket)
-            line = line.rjust(5,' ') + ' '
-             
-            # print heat map with colors
+                label = self._bucket_ms_label(bucket)
+            line = label.rjust(6, ' ') + ' '
+
+            # Heat row: oldest→newest (left→right). Newest column is the RIGHT-most.
+            data_point = 0.0
             for record in self.data:
-                if type == 'Frequency':
-                   data_point = record.frequency_histogram[bucket]
-                elif type == 'Intensity':
-                   data_point = record.intensity_histogram[bucket]
-                if  data_point == 0:                                  # value 0 goes to token 0 (white)
+                if chart_type == 'Frequency':
+                    data_point = record.frequency_histogram[bucket]
+                else:
+                    data_point = record.intensity_histogram[bucket]
+
+                if data_point == 0:
                     token = 0
-                elif data_point >= max_val:         # max val and above (if in manual max mode) go to token 6
+                elif data_point >= max_val:
                     token = 6
                 else:
-                    token = int(data_point*6/max_val) + 1   # normalize to range 1..6
+                    token = int(data_point * 6 / max_val) + 1
 
                 if g_params.debug_level >= 2:
-                   line += str(token) + ':' + str(data_point) + ', '            # debug code
+                    line += f"{token}:{data_point}, "
                 else:
-                   line += self.asciiescape_color(token, params_color) + ' '    # add a colored point in the graph
+                    line += self._bg_color(token, palette) + ' '  # colored block
 
-            # print values of latest point on the right side of the graph
-            line += self.asciiescape_backtonormal
+            # Latest value (right margin)
+            line += self.ESC_RESET + self._fmt_value(data_point).rjust(7, '.')
 
-            line += self.value_to_string(data_point).rjust(7,'.')
-
-            # print legend 
-            if g_params.print_legend:        # do not print legend if print_legend is false
-                if line_num <= 6:            # use line_num as guide 
-                    line += '    ' + self.asciiescape_color(line_num, params_color) 
-                    line += ' ' + self.asciiescape_backtonormal + ' '
-                    display_val = int(max_val * (line_num-1) / 6)  
-                    if line_num == 0:
-                        line += '0'
-                    else:
-                        line += '>' + self.value_to_string(display_val)
-                elif line_num == 7:
-                    line += '    ' + 'Max: ' + self.value_to_string(chart_maxval)
-                elif line_num == (g_params.max_latency_bkt-g_params.min_latency_bkt):  #last line of the heatmap
+            # Legend on the far right
+            if g_params.print_legend:
+                if row_idx <= 6:
+                    line += '    ' + self._bg_color(row_idx, palette) + ' ' + self.ESC_RESET + ' '
+                    display_val = 0 if row_idx == 0 else int(max_val * (row_idx - 1) / 6)
+                    line += ('0' if row_idx == 0 else '>' + self._fmt_value(display_val))
+                elif row_idx == 7:
+                    line += '    ' + 'Max: ' + self._fmt_value(chart_maxval)
+                elif row_idx == (g_params.max_latency_bkt - g_params.min_latency_bkt):
                     line += '    ' + 'Max(Sum):'
-            print(line) 
+            print(line)
 
-        # trailing part of the graph
-        line = '      ' 
-        if type == 'Frequency':
-            line += 'x=time, y=latency bucket, color = wait frequency (IOPS)'
+        # Footer line under the heatmap
+        last = self.data[-1]
+        line = '      '
+        if chart_type == 'Frequency':
+            line += 'x=time, y=latency bucket (ms), color=wait frequency (IOPS)'
             line = line.ljust(g_params.num_latency_records + 3)
-            line += 'Sum:' + self.value_to_string(record.sum_frequency).rjust(7,'.')
-            line += '    ' + self.value_to_string(max([record.sum_frequency for record in self.data])) 
-        elif type == 'Intensity':
-            line += 'x=time, y=latency bucket, color = time waited'
+            line += 'Sum:' + self._fmt_value(last.sum_frequency).rjust(7, '.')
+            max_sum = max(r.sum_frequency for r in self.data)
+            line += '    ' + self._fmt_value(max_sum)
+        else:
+            line += 'x=time, y=latency bucket (ms), color=time waited'
             line = line.ljust(g_params.num_latency_records + 3)
-            line += 'Sum:' + self.value_to_string(record.sum_intensity).rjust(7,'.')
-            line += '    ' + self.value_to_string(max([record.sum_intensity for record in self.data]))
+            line += 'Sum:' + self._fmt_value(last.sum_intensity).rjust(7, '.')
+            max_sum = max(r.sum_intensity for r in self.data)
+            line += '    ' + self._fmt_value(max_sum)
         print(line + '\n')
 
-def main():
-    my_chart_data = ArrayOfLatencyRecords()
-    I_am_first_record = True
+    # ------------------------------- Public -------------------------------- #
+
+    def render(self) -> None:
+        self._print_header()
+        if g_params.frequency_map:
+            self._print_heat_map('Frequency')
+        if g_params.intensity_map:
+            self._print_heat_map('Intensity')
+        self._print_footer()
+
+
+# --------------------------------- Main ------------------------------------ #
+
+def main(argv: list[str] | None = None) -> int:
+    # Parse CLI first so -h/--help works via console script entry point
+    g_params.parse_cli(argv)
+    # Show banner after successful parse (won't print on -h because argparse exits first)
+    g_params.usage_banner()
+    chart = ArrayOfLatencyRecords()
+    first = True
+    previous = LatencyRecord()  # dummy previous for first delta computation
 
     while True:
-        myrecord = LatencyRecord()               # new empty record object
-        myrecord.go_to_begin_record_tag()        # read and discard everything till the <begin data> tag
+        rec = LatencyRecord()
+        rec.go_to_begin_record_tag()
         try:
-            myrecord.read_record()               # read record values
+            rec.read_record()
         except Exception as err:
-            sys.stderr.write('ERROR: %s\n' % str(err))
+            sys.stderr.write(f"ERROR: {err}\n")
             return 1
-        if g_params.debug_level >= 2:
-            myrecord.print_record_debug()
-        if I_am_first_record:
-            myrecord.autotune_latency_buckets()        # check if latency buckets min and max need autotune
-            I_am_first_record = False                  # no delta values computed for the first record
-        else:
-            myrecord.compute_deltas(previous_record)   # compute delta values of metrics
-        my_chart_data.add_new_record(myrecord)         # add the record object to the historical array 
-        previous_record = myrecord     # make a copy of the record used to compute deltas at the next iteration
 
-        my_chart_data.print_header()
-        if g_params.frequency_map:
-            my_chart_data.print_heat_map('Frequency')
-        if g_params.intensity_map:
-            my_chart_data.print_heat_map('Intensity')
-        my_chart_data.print_footer()
-        time.sleep(g_params.screen_delay)             # the delay is useful when replaying recorded data and/or trace files
+        if g_params.debug_level >= 2:
+            print("\nLatest data record:")
+            print(rec.data)
+
+        if first:
+            LatencyRecord._autotune_latency_buckets()
+            first = False
+        else:
+            rec.compute_deltas(previous)
+
+        chart.add_new_record(rec)
+        previous = rec
+
+        chart.render()
+        time.sleep(g_params.screen_delay)
 
         if g_params.debug_level >= 3:
-            my_chart_data.print_frequency_histograms_debug()
+            chart.print_frequency_histograms_debug()
         if g_params.debug_level >= 4:
-            my_chart_data.print_intensity_histograms_debug()
+            chart.print_intensity_histograms_debug()
 
 
 if __name__ == '__main__':
-    g_params = GlobalParameters()
-    g_params.usage()
-    g_params.get_options()
     sys.exit(main())
-

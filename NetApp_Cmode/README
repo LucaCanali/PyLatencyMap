@@ -1,8 +1,0 @@
-In this directory you can find perl scripts to collect latency histogram data from NetApp C-mode (version 8) filers
-for visualization with PyLatencyMap
-To get started see the provided example scripts, in particular Example10_NetApp_Cmode_reads.sh and Example10b_NetApp_Cmode_writes.sh
-
-Note that the PERL scripts need additional modules, in particular Net::OpenSSH and IO::Pty. Some tips for installing PERL modules:
-     - yum install perl-CPAN
-     - download the modules from CPAN
-

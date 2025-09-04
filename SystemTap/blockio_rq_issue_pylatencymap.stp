@@ -1,62 +1,44 @@
 #!/usr/bin/stap
 #
-# blockio_rq_issue_pylatencymap.stp
+# blockio_rq_issue_basic_pylatencymap.stp
 #
 # This is a SystemTap script to gather block I/O latency from the Linux kernel block I/O interface
+# and print I/O latency histograms to be consumed by PyLatencyMap for heatmap visualization
 #
-# By Luca.Canali@cern.ch, July 2015
-# This script is based on original ideas by Brendan Gregg see also biolatency-nd.stp and systemtap-lwtools
+# By Luca.Canali@cern.ch, March 2015
 #
-# Note: the use of kernel.trace("block_rq_issue") and kernel.trace("block_rq_complete") allows the 
-# script to work without the need to install kernel debuginfo.
+# This script is based on original ideas of biolatency-nd.stp of systemtap-lwtools
+# by Brendan Gregg
 #
-# Notes: struct bio, details at http://lxr.free-electrons.com/source/include/linux/blk_types.h
-#        struct request, details at http://lxr.free-electrons.com/source/include/linux/blkdev.h
-#
-# Usage: stap -v blockio_rq_issue_pylatencymap.stp <sec>
-# Example: 
-#    use with pylatencymap Example9 (stap -v blockio_rq_issue_pylatencymap.stp 3)
-#
-# Tested on Systemtap versions 1.8, 2,5 and 2.6, RHEL/OL 5,6,7
-# Note: this script requires minor changes from kernel 3.14 and higher to reflect struct bio changes
+# Note the use of kernel.trace("block_rq_issue") and kernel.trace("block_rq_complete") instead of
+# ioblock.request and ioblock_end, the probe works without the need to have kernel debuginfo.
 #
 
-global LatencyTimes, RequestTime[100000]
+global latencyTimes, requestTime
 
-# probe on block I/O as it is issued
 probe kernel.trace("block_rq_issue") {
-   t = gettimeofday_us()
-   # examine only the first bio record for simplicity (it seems that more than 1 bio is rare anyways)
-   # rq type is struct request
-   if ($rq->bio)                       # discard entries without a bio record
-      if ($rq->bio->bi_bdev)           # discard entries without a device associated
-         if ($rq->bio->bi_flags & 8)   # check BIO_SEG_VALID, introduced to avoid double counting with device mapper
-            if ($rq->bio->bi_size > 0)     # discard entries with size<=0
-               RequestTime[$rq->bio] = t   # record the start time of this block I/O
+        requestTime[$rq] = gettimeofday_us()
+
 }
 
-# I/O is finished, measure end time and add to histogram
 probe kernel.trace("block_rq_complete") {
    t = gettimeofday_us()
-   if ($rq->bio) {                        # discard entries without a bio record
-       s = RequestTime[$rq->bio]
-       if (s > 0) {
-          LatencyTimes <<< (t-s)        # populates latency histogram
-          delete RequestTime[$rq->bio]  # clears the timer for this block I/O 
-       }
+   s = requestTime[$rq]
+   if (s > 0) {
+       latencyTimes <<< (t-s)
+       delete requestTime[$rq]
    }
 }
 
-# print histogram every $1 seconds ($1 is the script parameter N.1) 
+# Print a PyLatencyMap record every `interval` (first script argument) seconds
 probe timer.sec($1) {
    printf("\n<begin record>\n")
    printf("timestamp, microsec, %d, %s\n",gettimeofday_us(),tz_ctime(gettimeofday_s()))
    printf("label, Latency of block I/O requests measured with SystemTap\n")
    printf("latencyunit, microsec\n")
    printf("datasource, systemtap\n")
-   if (@count(LatencyTimes) > 0)
-       println(@hist_log(LatencyTimes))
+   if (@count(latencyTimes) > 0)
+       println(@hist_log(latencyTimes))
    printf("\n<end record>\n")
-   # delete(LatencyTimes) pylatencymap works with incremental values, so do not delete
 }
 

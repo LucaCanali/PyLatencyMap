@@ -14,7 +14,7 @@
 #  iops INTEGER;
 #  mbps INTEGER;
 #BEGIN
-#   DBMS_RESOURCE_MANAGER.CALIBRATE_IO (10, 100, iops, mbps, lat);
+#   DBMS_RESOURCE_MANAGER.CALIBRATE_IO (10, 10, iops, mbps, lat);
 #
 #  DBMS_OUTPUT.PUT_LINE ('max_iops = ' || iops);
 #  DBMS_OUTPUT.PUT_LINE ('latency  = ' || lat);
