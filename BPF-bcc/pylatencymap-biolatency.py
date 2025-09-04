@@ -13,7 +13,7 @@
 #
 # 20-Sep-2015   Brendan Gregg   Created biolatency
 # May 2016      Luca Canali     Added integration to PyLatencyMap and
-#                               remaed the script to pylatencymap-biolatency.py  
+#                               rename the script to pylatencymap-biolatency.py
 # 
 
 from __future__ import print_function

@@ -16,7 +16,7 @@ def main():
     while True:
         line = sys.stdin.readline()
         if not line:
-            print "\nReached EOF from data source, exiting."
+            print('\nReached EOF from data source, exiting.')
             sys.exit(0)
         if line.strip() == '':
             continue
