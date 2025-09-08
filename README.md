@@ -37,7 +37,14 @@ python LatencyMap.py --help
 > Requires **Python 3.x** and a terminal that supports **ANSI colors**.
 
 ---
+## 🎬 Demo video
 
+<a href="https://www.youtube.com/watch?v=-YuShn6ro1g">
+<img src="https://img.youtube.com/vi/-YuShn6ro1g/hqdefault.jpg"
+      alt="Watch the demo" width="640">
+</a>
+
+---
 ## 🚀 Quick Start
 Try PyLatencyMap with sample data
 
@@ -107,7 +114,7 @@ stap -v SystemTap/blockio_rq_issue_pylatencymap.stp 3 | python LatencyMap.py
 cat SampleData/test_SystemTap_data.txt|python SystemTap/systemtap_connector.py|python LatencyMap.py
 ```
 
-### DTrace (Solaris/Illumos, macOS)
+### DTrace
 ```bash
 # example with a DTrace script measuring pread latency
 dtrace -s DTrace/pread_latency.d |python DTrace/dtrace_connector.py |python LatencyMap.py
@@ -260,6 +267,7 @@ dist/                    # Built artifacts (when present)
 ## 📖 References
 
 - Blog posts:
+    - Blog: [Troubleshoot I/O & Wait Latency with OraLatencyMap and PyLatencyMap](https://db-blog.web.cern.ch/node/199)
     - http://externaltable.blogspot.com/2013/08/pylatencymap-performance-tool-to-drill.html
     - http://externaltable.blogspot.com/2013/09/getting-started-with-pylatencymap.html
     - http://externaltable.blogspot.com/2015/03/heat-map-visualization-for-systemtap.html
